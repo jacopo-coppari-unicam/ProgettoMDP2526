@@ -1,4 +1,6 @@
-package it.unicam.cs.mpgc.rpg125571.model;
+package it.unicam.cs.mpgc.rpg125571.model.Character;
+
+import it.unicam.cs.mpgc.rpg125571.model.Stats;
 
 public abstract class GameCharacter {
     private String name;
