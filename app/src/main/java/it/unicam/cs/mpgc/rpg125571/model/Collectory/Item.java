@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg125571.model;
+package it.unicam.cs.mpgc.rpg125571.model.Collectory;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 
 public class Item {
