@@ -7,6 +7,7 @@ import it.unicam.cs.mpgc.rpg125571.model.Character.Player;
 import it.unicam.cs.mpgc.rpg125571.model.Collectory.Consumable;
 import it.unicam.cs.mpgc.rpg125571.model.Collectory.Equip;
 import it.unicam.cs.mpgc.rpg125571.model.Collectory.Material;
+import it.unicam.cs.mpgc.rpg125571.model.Stats;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -45,5 +46,17 @@ public class App{
                 12);
         System.out.println(consumable.getId() + " - " + consumable.getName() + " - " + consumable.getDescription() + " - " + consumable.getConsumeValue());
 
+
+        Stats stats = new Stats(2,4,30);
+        Player player = new Player("Jacopo", 15, stats);
+        System.out.println("NOME: " + player.getName());
+        System.out.println("LIVELLO: " + player.getLevel());
+        System.out.println("ATK: " + player.getStats().getAtk());
+        System.out.println("DEF: " +player.getStats().getDef());
+        System.out.println("HP: " +player.getStats().getHp());
+
+        System.out.println("Jacopo è stato attaccato!! (-13)");
+        player.getDamage(13);
+        System.out.println("Vita attuale: " + player.getCurrentHP());
     }
 }

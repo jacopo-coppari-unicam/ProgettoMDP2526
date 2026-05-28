@@ -18,13 +18,16 @@ public abstract class GameCharacter {
     
     // TODO
     public void getDamage(int damage) {
-
+        currentHP -= damage;
     }
 
     // TODO
     public void heal(int value){
-
+        currentHP += value;
     }
 
-
+    public String getName() {return name;}
+    public int getLevel() {return level;}
+    public Stats getStats() {return stats;}
+    public int getCurrentHP() {return currentHP;}
 }

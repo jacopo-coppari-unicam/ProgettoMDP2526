@@ -10,4 +10,8 @@ public class Consumable extends Item{
     }
 
     public int getConsumeValue(){return consumeValue;}
+
+    public void useConsumable(){
+
+    }
 }
