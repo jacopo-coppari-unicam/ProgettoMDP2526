@@ -15,7 +15,7 @@ public abstract class GameCharacter {
         this.stats = stats;
         this.currentHP = stats.getMaxHp();
     }
-
+    
     // TODO
     public void getDamage(int damage) {
 
