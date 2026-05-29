@@ -53,7 +53,7 @@ public class App{
         System.out.println("LIVELLO: " + player.getLevel());
         System.out.println("ATK: " + player.getStats().getAtk());
         System.out.println("DEF: " +player.getStats().getDef());
-        System.out.println("HP: " +player.getStats().getHp());
+        System.out.println("HP: " +player.getStats().getMaxHp());
 
         System.out.println("Jacopo è stato attaccato!! (-13)");
         player.getDamage(13);

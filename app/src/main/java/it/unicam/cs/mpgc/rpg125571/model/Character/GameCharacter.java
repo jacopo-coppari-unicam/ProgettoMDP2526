@@ -16,18 +16,30 @@ public abstract class GameCharacter {
         this.currentHP = stats.getMaxHp();
     }
     
-    // TODO
+    // Diminuisce la vita del character
     public void getDamage(int damage) {
         currentHP -= damage;
     }
 
-    // TODO
+    // Aumenta la vita del character
     public void heal(int value){
         currentHP += value;
     }
 
+    public boolean isAlive() {
+        return this.currentHP > 0;
+    }
+
+    public boolean isDead() {
+        return !isAlive();
+    }
+
+    // Getter
     public String getName() {return name;}
     public int getLevel() {return level;}
     public Stats getStats() {return stats;}
     public int getCurrentHP() {return currentHP;}
+
+    // Setter
+    public void setLevel(int level) {this.level = level;}
 }
