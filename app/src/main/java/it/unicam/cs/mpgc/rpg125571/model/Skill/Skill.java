@@ -21,8 +21,8 @@ public abstract class Skill {
     public abstract void cast(GameCharacter caster, GameCharacter target, int level, int tier);
 
     // Potenziamento delle Skill dato il livello di maestria (Level, Tier)
-    private int scaleFactor = 3; // Aumento del value per livello
-    private double tierBonus = 0.20; // Ogni Tier aumenta del 20% il valore base della skill, COMULABILE?
+    private final int scaleFactor = 3; // Aumento del value per livello
+    private final double tierBonus = 0.20; // Ogni Tier aumenta del 20% il valore base della skill, COMULABILE?
 
     public int calculateEffectiveValue(int level, int tier) {
         // La formula è:

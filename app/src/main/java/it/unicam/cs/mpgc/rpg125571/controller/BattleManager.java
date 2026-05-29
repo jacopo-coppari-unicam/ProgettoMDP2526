@@ -73,4 +73,10 @@ public class BattleManager {
         }
         System.out.println("==========================================");
     }
+
+    private boolean skillMenu(){
+        //var skill = player.getSkills();
+
+        return true;
+    }
 }
