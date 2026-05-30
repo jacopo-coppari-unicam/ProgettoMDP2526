@@ -3,11 +3,6 @@
  */
 package it.unicam.cs.mpgc.rpg125571;
 
-import it.unicam.cs.mpgc.rpg125571.controller.BattleManager;
-import it.unicam.cs.mpgc.rpg125571.model.Character.Enemy;
-import it.unicam.cs.mpgc.rpg125571.model.Character.GameCharacter;
-import it.unicam.cs.mpgc.rpg125571.model.Character.Player;
-import it.unicam.cs.mpgc.rpg125571.model.Stats;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,40 +10,5 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class AppTest {
-    public static void main(String[] args) {
-            System.out.println("==========================================");
-            System.out.println("      AVVIO SIMULATORE DI BATTAGLIA       ");
-            System.out.println("==========================================\n");
 
-            // 1. Creazione delle statistiche base (Atk, Def, MaxHp)
-            Stats playerStats = new Stats(25, 5, 100);  // Un eroe bilanciato
-            Stats goblinStats = new Stats(15, 2, 40);   // Un mostro debole ma agile
-
-            // 2. Creazione dei personaggi reali usando le tue classi estese
-            // (Passiamo liste vuote per l'inventario o i drop, giusto per il test)
-            Player heracles = new Player("Heracles", 1, playerStats);
-
-            // Usiamo un costruttore fittizio di Enemy per il test (senza tabelle di drop per ora)
-            Enemy goblin = new Enemy("Goblin Esploratore", 1, goblinStats);
-
-            // 3. Stampa dello stato iniziale per controllo visivo
-            System.out.println("[STATISTICHE INIZIALI]");
-            stampaStatoPersonaggio(heracles);
-            stampaStatoPersonaggio(goblin);
-            System.out.println("==========================================\n");
-
-            // 4. Inizializzazione del BattleManager e avvio dello scontro
-            BattleManager battle = new BattleManager(heracles, goblin);
-            battle.startBattle();
-        }
-
-        /**
-         * Metodo di utilità locale per stampare i dati del personaggio prima dello scontro.
-         */
-        private static void stampaStatoPersonaggio(GameCharacter character) {
-            System.out.println("- " + character.getName() + " (Lv." + character.getLevel() + ") -> " +
-                    "HP: " + character.getCurrentHP() + "/" + character.getStats().getMaxHp() + " | " +
-                    "ATK: " + character.getStats().getAtk() + " | " +
-                    "DEF: " + character.getStats().getDef());
-        }
 }

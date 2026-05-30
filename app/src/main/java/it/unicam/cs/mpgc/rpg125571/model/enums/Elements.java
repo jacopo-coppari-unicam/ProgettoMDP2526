@@ -1,9 +1,10 @@
 package it.unicam.cs.mpgc.rpg125571.model.enums;
 
-public enum Element {
+public enum Elements {
     FIRE,
-    WATER,
     AIR,
     EARTH,
-    PHYSICAL
+    WATER,
+    ICE,
+    LIGHTNING
 }

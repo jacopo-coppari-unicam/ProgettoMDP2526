@@ -1,5 +1,4 @@
-package it.unicam.cs.mpgc.rpg125571.model.Collectory;
-import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
+package it.unicam.cs.mpgc.rpg125571.model.item;
 
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 
