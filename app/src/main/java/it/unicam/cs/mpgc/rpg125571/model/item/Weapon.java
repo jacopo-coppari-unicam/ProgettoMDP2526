@@ -14,4 +14,11 @@ public class Weapon extends AbstractItem implements Equipable {
         this.damage = damage;
     }
 
+    @Override
+    public List<Modifier> getModifiers() {
+        return List.of(
+                stats -> stats.addAtk(damage)
+        );
+    }
+
 }

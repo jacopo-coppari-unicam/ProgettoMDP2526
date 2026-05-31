@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.rpg125571.model.character;
 
 public class Stats {
+
     private int atk;
     private int def;
     private int maxHp;
@@ -11,11 +12,26 @@ public class Stats {
         this.maxHp = maxHp;
     }
 
-    public Stats copy(){
+    public Stats copy() {
         return new Stats(atk, def, maxHp);
     }
 
-    public int getAtk() {return atk;}
-    public int getDef() { return def;}
-    public int getMaxHp() {return maxHp;}
+    public int getAtk() { return atk; }
+
+    public int getDef() { return def; }
+
+    public int getMaxHp() { return maxHp; }
+
+
+    public void setAtk(int atk) {
+        this.atk = atk;
+    }
+
+    public void setDef(int def) {
+        this.def = def;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
 }

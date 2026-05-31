@@ -10,6 +10,19 @@ public abstract class Character implements Damageable {
     private int currentHp;
     Equipment equipment;
 
+    public Character(String name, int level, Stats baseStats, Equipment equipment) {
+        this.name = name;
+        this.level = level;
+        this.baseStats = baseStats;
+        this.equipment = equipment;
+        this.currentHp = baseStats.getMaxHp();
+    }
+
+    public void heal(int value){
+        if((currentHp + value) <= baseStats.getMaxHp()) currentHp += value;
+        else currentHp = baseStats.getMaxHp();
+    }
+
     @Override
     public void takeDamage(int damage) {
         currentHp -= damage;
