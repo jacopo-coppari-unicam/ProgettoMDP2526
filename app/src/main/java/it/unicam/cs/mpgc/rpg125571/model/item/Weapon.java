@@ -1,13 +1,12 @@
 package it.unicam.cs.mpgc.rpg125571.model.item;
 
-import it.unicam.cs.mpgc.rpg125571.model.character.modificator.Modifier;
+import it.unicam.cs.mpgc.rpg125571.model.modifier.Modifier;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Weapon extends AbstractItem implements Equipable {
-    private int damage;
+    private final int damage;
 
     public Weapon(int id, String name, ItemType type, String description, int damage) {
         super(id, name, type, description);
@@ -17,7 +16,7 @@ public class Weapon extends AbstractItem implements Equipable {
     @Override
     public List<Modifier> getModifiers() {
         return List.of(
-                stats -> stats.addAtk(damage)
+                stats -> stats.setAtk(stats.getAtk() + damage)
         );
     }
 

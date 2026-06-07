@@ -1,25 +1,29 @@
 package it.unicam.cs.mpgc.rpg125571.model.item;
 
-import it.unicam.cs.mpgc.rpg125571.model.character.modificator.Modifier;
+import it.unicam.cs.mpgc.rpg125571.model.modifier.Modifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Equipment {
-    // Lista degli oggetti che possono essere (Equipable) e che sono equipaggiati
-    List<Equipable> equippedItems;
+    private final List<Equipable> equippedItems = new ArrayList<>();
 
-    public void equip(Equipable item) { equippedItems.add(item); }
 
-    public void unequip(Equipable item) { equippedItems.remove(item); }
+    public void equip(Equipable item) {
+        equippedItems.add(item);
+    }
 
-    // prende tutti i modificatori nella lista di items equipaggiati e li restituisce in mods
+    public void unequip(Equipable item) {
+        equippedItems.remove(item);
+    }
+
     public List<Modifier> getModifiers() {
         List<Modifier> mods = new ArrayList<>();
 
         for (Equipable item : equippedItems) {
             mods.addAll(item.getModifiers());
         }
+
         return mods;
     }
 }

@@ -3,10 +3,10 @@ package it.unicam.cs.mpgc.rpg125571.model.item;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 
 public abstract class AbstractItem implements Item {
-    private int id;
-    private String name;
-    private ItemType type;
-    private String description;
+    private final int id;
+    private final String name;
+    private final ItemType type;
+    private final String description;
 
     public AbstractItem(int id, String name, ItemType type, String description) {
         this.id = id;

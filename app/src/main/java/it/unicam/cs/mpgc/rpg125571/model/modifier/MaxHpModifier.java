@@ -1,5 +1,3 @@
-package it.unicam.cs.mpgc.rpg125571.model.character.modificator;
-
 package it.unicam.cs.mpgc.rpg125571.model.modifier;
 
 import it.unicam.cs.mpgc.rpg125571.model.character.Stats;
