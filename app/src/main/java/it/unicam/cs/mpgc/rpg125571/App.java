@@ -2,11 +2,12 @@ package it.unicam.cs.mpgc.rpg125571;
 
 import it.unicam.cs.mpgc.rpg125571.model.character.Player;
 import it.unicam.cs.mpgc.rpg125571.model.character.Stats;
+import it.unicam.cs.mpgc.rpg125571.model.enums.Element;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 import it.unicam.cs.mpgc.rpg125571.model.item.*;
 import it.unicam.cs.mpgc.rpg125571.model.modifier.*;
+import it.unicam.cs.mpgc.rpg125571.model.skill.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class App {
@@ -47,87 +48,258 @@ public class App {
         System.out.println(      "║         RPG APP TESTER       ║");
         System.out.println(      "╚══════════════════════════════╝" + RESET);
 
-        // ── 1. INIZIALIZZAZIONE APPLICAZIONE / STATO INIZIALE ──────────────────
-        section("1. App Setup – Stato Iniziale del Giocatore");
+        // ══════════════════════════════════════════════════════
+        // 1. STATO INIZIALE DEL GIOCATORE
+        // ══════════════════════════════════════════════════════
+        section("1. Stato iniziale del giocatore");
 
         Player player = new Player("Guerriero", 1, new Stats(12, 6, 120), new Equipment());
-        assertEqual("Nome del profilo impostato correttamente", "Guerriero", player.getName());
-        assertEqual("Livello di partenza impostato a 1", 1, player.getLevel());
-        assertEqual("HP attuali al massimo all'avvio", 120, player.getCurrentHp());
+        assertEqual("Nome impostato correttamente",       "Guerriero", player.getName());
+        assertEqual("Livello di partenza = 1",            1,           player.getLevel());
+        assertEqual("HP correnti = maxHp delle baseStats", 120,        player.getCurrentHp());
 
-        // ── 2. FLUSSO DI GESTIONE INVENTARIO ─────────────────────────────────────
-        section("2. App Flow – Gestione Inventario e Loot");
+        // getCurrentStats senza modifier = copia esatta delle baseStats
+        Stats statsBase = player.getCurrentStats();
+        assertEqual("getCurrentStats() senza modifier: ATK = baseStats.ATK", 12, statsBase.getAtk());
+        assertEqual("getCurrentStats() senza modifier: DEF = baseStats.DEF", 6,  statsBase.getDef());
+        assertEqual("getCurrentStats() senza modifier: maxHp = baseStats.maxHp", 120, statsBase.getMaxHp());
 
-        // Simuliamo l'ottenimento di oggetti durante il gioco
-        Weapon rareSword = new Weapon(10, "Spada di Diamante", ItemType.WEAPON, "Arma leggendaria", 25);
-        Potion superPotion = new Potion(11, "Super Pozione", ItemType.POTION, "Cura totale", List.of(new MaxHpModifier(20)));
+        // ══════════════════════════════════════════════════════
+        // 2. EQUIPAGGIAMENTO — Equipment + Modifier da Weapon/Armor
+        // ══════════════════════════════════════════════════════
+        section("2. Equipaggiamento (Weapon, Armor, Equipment)");
 
-        // Supponendo che il tuo Player abbia un inventario (List<Item>) gestito da App
-        List<Item> inventory = new ArrayList<>();
-        inventory.add(rareSword);
-        inventory.add(superPotion);
+        Weapon sword   = new Weapon(1, "Spada di Ferro",    ItemType.WEAPON, "+10 ATK",  10);
+        Armor  shield  = new Armor (2, "Scudo di Legno",    ItemType.ARMOR,  "+5 DEF",    5);
+        Weapon sword2  = new Weapon(3, "Spada di Diamante", ItemType.WEAPON, "+25 ATK",  25);
 
-        assertEqual("Looting: 2 oggetti aggiunti all'inventario", 2, inventory.size());
-        assertTrue("L'inventario contiene la Spada", inventory.contains(rareSword));
+        assertTrue("equip() prima spada: restituisce true",  player.getEquipment().equip(sword));
+        assertTrue("equip() scudo: restituisce true",        player.getEquipment().equip(shield));
+        assertTrue("equip() spada duplicata: restituisce false (già equipaggiata)",
+                !player.getEquipment().equip(sword));
 
-        // ── 3. SIMULAZIONE PRE-COMBATTIMENTO (BUFFING) ───────────────────────────
-        section("3. App Flow – Fase di Preparazione (Uso Consumabili)");
+        Stats statsConEquip = player.getCurrentStats();
+        assertEqual("ATK con spada (+10): 12+10 = 22",  22, statsConEquip.getAtk());
+        assertEqual("DEF con scudo (+5): 6+5 = 11",     11, statsConEquip.getDef());
+        assertEqual("maxHp invariato dall'equipaggiamento", 120, statsConEquip.getMaxHp());
 
-        // Il giocatore usa la pozione prima di entrare nel dungeon
-        superPotion.use(player);
-        assertEqual("La pozione ha iniettato il modificatore temporaneo", 1, player.getTemporaryModifiers().size());
+        assertTrue("unequip() scudo: restituisce true",  player.getEquipment().unequip(shield));
+        assertEqual("DEF torna a 6 dopo unequip scudo",  6, player.getCurrentStats().getDef());
+        assertTrue("unequip() item non equipaggiato: restituisce false",
+                !player.getEquipment().unequip(shield));
 
-        Stats statsConBuff = ModifierSystem.calculate(player.getBaseStats(), player.getTemporaryModifiers());
-        assertEqual("HP massimi incrementati temporaneamente prima del calcolo finale", 140, statsConBuff.getMaxHp());
+        // ══════════════════════════════════════════════════════
+        // 3. INVENTARIO — Inventory
+        // ══════════════════════════════════════════════════════
+        section("3. Inventario del giocatore");
 
-        // ── 4. SIMULAZIONE CICLO DI COMBATTIMENTO (BATTLE LOOP) ──────────────────
-        section("4. App Core – Simulazione Battaglia a Turni (Calcolo Danni)");
+        Potion hpPotion  = new Potion(10, "Pozione HP",   ItemType.POTION, "+20 maxHp x3 turni",
+                List.of(new MaxHpModifier(20)), 3);
+        Potion atkPotion = new Potion(11, "Pozione ATK",  ItemType.POTION, "+8 ATK x2 turni",
+                List.of(new AtkModifier(8)),    2);
 
-        // Creiamo un secondo personaggio (il Nemico)
-        Player enemy = new Player("Orco Goblin", 1, new Stats(15, 4, 80), new Equipment());
+        player.getInventory().addItem(hpPotion);
+        player.getInventory().addItem(atkPotion);
+        player.getInventory().addItem(sword2);
 
-        // Equipaggiamo il giocatore per la battaglia
-        player.getEquipment().equip(rareSword); // +25 ATK
+        assertEqual("Inventario: 3 item aggiunti",             3, player.getInventory().getItems().size());
+        assertEqual("Consumabili filtrati correttamente: 2",   2, player.getInventory().getConsumables().size());
+        assertEqual("Equipaggiabili filtrati correttamente: 1",1, player.getInventory().getEquipables().size());
+        assertTrue("hasItem(): hpPotion trovata",              player.getInventory().hasItem(hpPotion));
 
-        // Calcolo statistiche finali del Player per il turno attuale
-        List<Modifier> currentTurnMods = new ArrayList<>();
-        currentTurnMods.addAll(player.getEquipment().getModifiers());
-        currentTurnMods.addAll(player.getTemporaryModifiers());
-        Stats playerFinalStats = ModifierSystem.calculate(player.getBaseStats(), currentTurnMods);
+        assertTrue("removeItem(): rimozione di atkPotion",     player.getInventory().removeItem(atkPotion));
+        assertEqual("Inventario dopo rimozione: 2 item",       2, player.getInventory().getItems().size());
+        assertTrue("removeItem() item assente: false",         !player.getInventory().removeItem(atkPotion));
 
-        // TURNO 1: Il Player attacca il nemico
-        // Formula ipotetica di App.java: Danno = (ATK Attaccante) - (DEF Difensore)
-        int damageDealt = Math.max(1, playerFinalStats.getAtk() - enemy.getBaseStats().getDef());
-        // ATK = 12 (base) + 25 (spada) = 37. DEF Nemico = 4. Danno atteso = 33
-        assertEqual("Calcolo danno Turno 1 (37 ATK vs 4 DEF)", 33, damageDealt);
+        // ══════════════════════════════════════════════════════
+        // 4. BUFF TEMPORANEI — TemporaryModifier + Potion
+        // ══════════════════════════════════════════════════════
+        section("4. Buff temporanei (Potion → TemporaryModifier)");
 
-        enemy.takeDamage(damageDealt);
-        assertEqual("HP del nemico ridotti dopo il Turno 1 (80 - 33)", 47, enemy.getCurrentHp());
-        assertTrue("Il nemico è ancora in piedi", !enemy.isDead());
+        // Player ha ancora la spada equipaggiata (+10 ATK), nessun buff attivo
+        assertEqual("Nessun buff temporaneo prima dell'uso pozione", 0,
+                player.getTemporaryModifiers().size());
 
-        // TURNO 2: Il nemico contrattacca
-        int damageReceived = Math.max(1, enemy.getBaseStats().getAtk() - playerFinalStats.getDef());
-        // ATK Nemico = 15. DEF Player = 6. Danno atteso = 9
-        assertEqual("Calcolo danno ricevuto Turno 2 (15 ATK vs 6 DEF)", 9, damageReceived);
+        hpPotion.use(player);   // +20 maxHp per 3 turni
 
-        player.takeDamage(damageReceived);
-        assertEqual("HP del Player ridotti (120 - 9)", 111, player.getCurrentHp());
+        assertEqual("1 buff attivo dopo uso pozione",          1, player.getTemporaryModifiers().size());
+        assertEqual("Turni rimanenti del buff = 3",            3,
+                player.getTemporaryModifiers().get(0).getRemainingTurns());
 
-        // TURNO 3: Il Player sferra il colpo di grazia (simuliamo un colpo critico o danno massiccio)
-        enemy.takeDamage(50);
-        assertTrue("Il nemico è stato sconfitto (HP <= 0)", enemy.isDead());
+        Stats statsConBuff = player.getCurrentStats();
+        assertEqual("maxHp con buff: 120+20 = 140",            140, statsConBuff.getMaxHp());
+        assertEqual("ATK invariato dal buff HP",               22,  statsConBuff.getAtk());
 
-        // ── 5. PULIZIA POST-COMBATTIMENTO ─────────────────────────────────────────
-        section("5. App Flow – Fine Battaglia e Reset Modificatori");
+        // Heal rispetta il maxHp corrente (con buff)
+        player.takeDamage(50);
+        assertEqual("HP dopo 50 danni: 120-50 = 70",           70, player.getCurrentHp());
+        player.heal(200);
+        assertEqual("heal() cappato al maxHp corrente (140)",  140, player.getCurrentHp());
 
-        // Al termine della battaglia l'applicazione deve ripulire gli effetti temporanei
+        // Tick: decrementare i turni e verificare scadenza
+        player.tickTemporaryModifiers();
+        assertEqual("Buff ancora attivo dopo 1 tick (2 turni rimasti)", 2,
+                player.getTemporaryModifiers().get(0).getRemainingTurns());
+        player.tickTemporaryModifiers();
+        player.tickTemporaryModifiers();
+        assertEqual("Buff scaduto dopo 3 tick: lista vuota", 0,
+                player.getTemporaryModifiers().size());
+
+        Stats statsDopoScadenza = player.getCurrentStats();
+        assertEqual("maxHp torna a 120 dopo scadenza buff",    120, statsDopoScadenza.getMaxHp());
+
+        // clearTemporaryModifiers() — pulizia immediata
+        hpPotion.use(player);
+        assertEqual("Buff riapplicato: 1 attivo",              1, player.getTemporaryModifiers().size());
         player.clearTemporaryModifiers();
-        assertTrue("I buff temporanei della battaglia precedente sono rimossi", player.getTemporaryModifiers().isEmpty());
+        assertEqual("clearTemporaryModifiers(): lista vuota",  0, player.getTemporaryModifiers().size());
 
-        Stats postBattleStats = ModifierSystem.calculate(player.getBaseStats(), player.getEquipment().getModifiers());
-        assertEqual("Le statistiche tornano normali (solo equipaggiamento attivo)", 37, postBattleStats.getAtk()); // 12 + 25
+        // ══════════════════════════════════════════════════════
+        // 5. SISTEMA SKILL — interfacce, casting, scaling
+        // ══════════════════════════════════════════════════════
+        section("5. Skill system (DamageSkill, HealingSkill, AbstractSkill scaling)");
 
-        // ── Riepilogo ─────────────────────────────────────────
+        DamageSkill  fireball = new DamageSkill (20, "Fireball",  "Palla di fuoco", Element.FIRE,  30);
+        HealingSkill cure     = new HealingSkill(21, "Cure",      "Cura base",      Element.LIGHT, 20);
+
+        // isA checks tramite interfacce
+        assertTrue("DamageSkill è un AttackSkill", fireball instanceof AttackSkill);
+        assertTrue("DamageSkill è una Skill",      fireball instanceof Skill);
+        assertTrue("HealingSkill è una HealSkill", cure     instanceof HealSkill);
+        assertTrue("HealingSkill è una Skill",     cure     instanceof Skill);
+
+        // Scaling: effectiveValue = (base + level * 3) * (1 + tier * 0.20)
+        // livello 1, tier 0: (30 + 1*3) * 1.0 = 33
+        assertEqual("DamageSkill getDamage(1,0) = 33", 33, fireball.getDamage(1, 0));
+        // livello 3, tier 1: (30 + 3*3) * 1.20 = 46.8 → troncato a 46 (cast int)
+        assertEqual("DamageSkill getDamage(3,1) = 46", 46, fireball.getDamage(3, 1));
+        // HealingSkill livello 1, tier 0: (20 + 3) * 1.0 = 23
+        assertEqual("HealingSkill getHealAmount(1,0) = 23", 23, cure.getHealAmount(1, 0));
+
+        // cast DamageSkill su nemico
+        Player enemy = new Player("Goblin", 1, new Stats(8, 2, 60), new Equipment());
+        fireball.cast(player, enemy, 1, 0);
+        assertEqual("cast DamageSkill: HP nemico 60-33 = 27", 27, enemy.getCurrentHp());
+
+        // cast HealingSkill: cura il caster (non il target)
+        // A questo punto player ha maxHp=120 (buff scaduto), HP correnti variabili.
+        // heal() cappato a getCurrentStats().getMaxHp() = 120
+        player.takeDamage(40);
+        int hpPrimaDiCurare = player.getCurrentHp();
+        int maxHpCaster     = player.getCurrentStats().getMaxHp();
+        cure.cast(player, enemy, 1, 0);   // heals caster di 23, cappato a maxHp
+        int hpAttesoDopoHeal = Math.min(hpPrimaDiCurare + 23, maxHpCaster);
+        assertEqual("cast HealingSkill: cura cappata a maxHp corrente",
+                hpAttesoDopoHeal, player.getCurrentHp());
+
+        // isDead
+        enemy.takeDamage(999);
+        assertTrue("isDead() dopo danni fatali", enemy.isDead());
+
+        // ══════════════════════════════════════════════════════
+        // 6. PLAYERSKI LL + SKILLINVENTORY + SKILLLOADOUT
+        // ══════════════════════════════════════════════════════
+        section("6. PlayerSkill, SkillInventory, SkillLoadout");
+
+        PlayerSkill psFireball = new PlayerSkill(fireball);
+        PlayerSkill psCure     = new PlayerSkill(cure);
+        DamageSkill thunder    = new DamageSkill(22, "Thunder", "Fulmine", Element.WIND, 25);
+        PlayerSkill psThunder  = new PlayerSkill(thunder);
+        DamageSkill blizzard   = new DamageSkill(23, "Blizzard", "Bufera", Element.ICE,  28);
+        PlayerSkill psBlizzard = new PlayerSkill(blizzard);
+
+        // PlayerSkill: stato iniziale
+        assertEqual("PlayerSkill: livello iniziale = 1", 1, psFireball.getCurrentLevel());
+        assertEqual("PlayerSkill: mastery iniziale = 0", 0, psFireball.getMasteryPoints());
+        assertTrue("PlayerSkill: non equipaggiata all'inizio", !psFireball.isEquipped());
+
+        // gainMastery: level up a 100 punti
+        psFireball.gainMastery(60);
+        assertEqual("Mastery dopo +60 = 60", 60, psFireball.getMasteryPoints());
+        psFireball.gainMastery(50);   // 60+50 = 110 → level up, reset a 0
+        assertEqual("Level up a 100 punti: livello = 2", 2, psFireball.getCurrentLevel());
+        assertEqual("Mastery azzerata dopo level up",    0, psFireball.getMasteryPoints());
+        psFireball.gainMastery(-10);  // valori negativi ignorati
+        assertEqual("gainMastery valori negativi: mastery invariata", 0, psFireball.getMasteryPoints());
+
+        // SkillInventory
+        player.getSkillInventory().addSkill(psFireball);
+        player.getSkillInventory().addSkill(psCure);
+        player.getSkillInventory().addSkill(psThunder);
+        assertEqual("SkillInventory: 3 skill aggiunte", 3,
+                player.getSkillInventory().getOwnedSkills().size());
+        assertTrue("hasSkill(fireball): trovata", player.getSkillInventory().hasSkill(fireball));
+        assertTrue("hasSkill(cure): trovata",     player.getSkillInventory().hasSkill(cure));
+
+        player.getSkillInventory().removeSkill(psThunder);
+        assertEqual("SkillInventory dopo rimozione: 2 skill", 2,
+                player.getSkillInventory().getOwnedSkills().size());
+
+        // SkillLoadout: max 3 slot
+        player.getSkillInventory().addSkill(psThunder);   // re-aggiungo per il loadout
+        assertTrue("equip psFireball: OK",    player.getSkillLoadout().equip(psFireball));
+        assertTrue("equip psCure: OK",        player.getSkillLoadout().equip(psCure));
+        assertTrue("equip psThunder: OK",     player.getSkillLoadout().equip(psThunder));
+        assertTrue("psFireball.isEquipped() = true", psFireball.isEquipped());
+        assertEqual("Slot usati = 3",         3, player.getSkillLoadout().getUsedSlots());
+        assertTrue("Loadout pieno",           player.getSkillLoadout().isFull());
+        assertTrue("equip 4a skill: false (loadout pieno)",
+                !player.getSkillLoadout().equip(psBlizzard));
+
+        assertTrue("equip duplicato: false",  !player.getSkillLoadout().equip(psFireball));
+
+        assertTrue("unequip psCure: OK",      player.getSkillLoadout().unequip(psCure));
+        assertTrue("psCure.isEquipped() = false dopo unequip", !psCure.isEquipped());
+        assertEqual("Slot usati dopo unequip = 2", 2, player.getSkillLoadout().getUsedSlots());
+        assertTrue("unequip skill non presente: false",
+                !player.getSkillLoadout().unequip(psBlizzard));
+
+        // ══════════════════════════════════════════════════════
+        // 7. SIMULAZIONE TURNO COMPLETO DI COMBATTIMENTO
+        // ══════════════════════════════════════════════════════
+        section("7. Simulazione turno completo (stat finali + skill + buff)");
+
+        Player hero    = new Player("Eroe",   1, new Stats(10, 5, 100), new Equipment());
+        Player monster = new Player("Mostro", 1, new Stats(12, 3, 80),  new Equipment());
+
+        Weapon heroSword = new Weapon(30, "Lama Eroica", ItemType.WEAPON, "+15 ATK", 15);
+        Potion buffAtk   = new Potion(31, "Pozione Forza", ItemType.POTION, "+10 ATK x2 turni",
+                List.of(new AtkModifier(10)), 2);
+        DamageSkill slash = new DamageSkill(32, "Slash", "Fendente", Element.NEUTRAL, 15);
+
+        hero.getEquipment().equip(heroSword);
+        buffAtk.use(hero);
+
+        // Stat finali: base(10) + arma(15) + buff(10) = 35 ATK
+        assertEqual("Stat finali turno 1: ATK = 35", 35, hero.getCurrentStats().getAtk());
+
+        // La skill usa takeDamage direttamente, qui simuliamo con stat finali
+        int rawDamage = hero.getCurrentStats().getAtk() - monster.getCurrentStats().getDef();
+        assertEqual("Danno calcolato: 35 ATK - 3 DEF = 32", 32, rawDamage);
+        monster.takeDamage(rawDamage);
+        assertEqual("HP mostro dopo turno 1: 80-32 = 48", 48, monster.getCurrentHp());
+
+        // Fine turno: tick buff
+        hero.tickTemporaryModifiers();
+        assertEqual("Buff forza: 1 turno rimanente", 1,
+                hero.getTemporaryModifiers().get(0).getRemainingTurns());
+        hero.tickTemporaryModifiers();
+        assertEqual("Buff forza scaduto dopo 2 tick", 0, hero.getTemporaryModifiers().size());
+        assertEqual("ATK torna a 25 (base+arma) dopo scadenza buff", 25,
+                hero.getCurrentStats().getAtk());
+
+        // Skill cast: slash su mostro (livello 1, tier 0)
+        slash.cast(hero, monster, 1, 0);
+        // effectiveValue = (15 + 1*3) * 1.0 = 18
+        assertEqual("HP mostro dopo Slash: 48-18 = 30", 30, monster.getCurrentHp());
+
+        assertTrue("Mostro ancora vivo", !monster.isDead());
+        monster.takeDamage(999);
+        assertTrue("Mostro sconfitto", monster.isDead());
+
+        // ══════════════════════════════════════════════════════
+        // RIEPILOGO
+        // ══════════════════════════════════════════════════════
         System.out.println("\n" + CYAN + "╔══════════════════════════════╗");
         System.out.printf(          "║  %s%-4d PASS%s  /  %s%-4d FAIL%s     ║%n",
                 GREEN, passed, CYAN, failed > 0 ? RED : GREEN, failed, CYAN);
