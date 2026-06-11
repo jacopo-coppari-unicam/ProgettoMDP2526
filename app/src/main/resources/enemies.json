@@ -1,0 +1,68 @@
+[
+  {
+    "name": "Goblin Esploratore",
+    "level": 1,
+    "baseStats": { "atk": 12, "def": 4, "maxHp": 50 },
+    "equipment": {},
+    "expReward": 35,
+    "goldReward": 15,
+    "lootTable": [
+      { "itemId": 1, "chance": 0.50 }
+    ]
+  },
+  {
+    "name": "Orco Guerriero",
+    "level": 3,
+    "baseStats": { "atk": 18, "def": 8, "maxHp": 90 },
+    "equipment": {},
+    "expReward": 60,
+    "goldReward": 30,
+    "lootTable": [
+      { "itemId": 2, "chance": 0.40 }
+    ]
+  },
+  {
+    "name": "Spettro Silenzioso",
+    "level": 4,
+    "baseStats": { "atk": 22, "def": 5, "maxHp": 75 },
+    "equipment": {},
+    "expReward": 80,
+    "goldReward": 40,
+    "lootTable": [
+      { "itemId": 10, "chance": 0.30 }
+    ]
+  },
+  {
+    "name": "Golem di Pietra",
+    "level": 5,
+    "baseStats": { "atk": 15, "def": 15, "maxHp": 120 },
+    "equipment": {},
+    "expReward": 100,
+    "goldReward": 50,
+    "lootTable": [
+      { "itemId": 1, "chance": 0.20 }
+    ]
+  },
+  {
+    "name": "BOSS: Il Re dei Corrotti",
+    "level": 8,
+    "baseStats": { "atk": 35, "def": 18, "maxHp": 250 },
+    "equipment": {},
+    "expReward": 300,
+    "goldReward": 150,
+    "lootTable": [
+      { "itemId": 3, "chance": 1.0 }
+    ]
+  },
+  {
+    "name": "BOSS FINALE: Drago dell'Eclissi",
+    "level": 12,
+    "baseStats": { "atk": 55, "def": 25, "maxHp": 450 },
+    "equipment": {},
+    "expReward": 1000,
+    "goldReward": 500,
+    "lootTable": [
+      { "itemId": 4, "chance": 1.0 }
+    ]
+  }
+]

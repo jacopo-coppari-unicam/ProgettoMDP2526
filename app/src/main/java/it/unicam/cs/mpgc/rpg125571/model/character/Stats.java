@@ -6,6 +6,12 @@ public class Stats {
     private int def;
     private int maxHp;
 
+    public Stats() {
+        this.atk = 0;
+        this.def = 0;
+        this.maxHp = 0;
+    }
+
     public Stats(int atk, int def, int maxHp) {
         this.atk = atk;
         this.def = def;
