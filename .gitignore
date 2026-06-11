@@ -6,3 +6,6 @@ build
 
 # Ignore Kotlin plugin data
 .kotlin
+
+# H2 trace log (non serve nel repo)
+data/*.trace.db

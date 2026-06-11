@@ -35,12 +35,9 @@ public class Inventory {
         items.add(item);
     }
 
-    /**
-     * Rimuove un item dall'inventario.
-     *
-     * @param item l'item da rimuovere
-     * @return {@code true} se l'item era presente ed è stato rimosso
-     */
+    // Rimuove un item dall'inventario.
+    // (Item item) è l'item da rimuovere
+    // return (true) se l'item era presente ed è stato rimosso
     public boolean removeItem(Item item) {
         return items.remove(item);
     }

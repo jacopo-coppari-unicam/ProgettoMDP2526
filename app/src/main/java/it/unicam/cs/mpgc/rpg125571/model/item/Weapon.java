@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg125571.model.item;
 
+import it.unicam.cs.mpgc.rpg125571.model.enums.EquipmentSlot;
 import it.unicam.cs.mpgc.rpg125571.model.modifier.AtkModifier;
 import it.unicam.cs.mpgc.rpg125571.model.modifier.Modifier;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
@@ -19,4 +20,8 @@ public class Weapon extends AbstractItem implements Equipable {
         return List.of(new AtkModifier(damage));
     }
 
+    @Override
+    public EquipmentSlot getSlot() {
+        return EquipmentSlot.WEAPON;
+    }
 }
