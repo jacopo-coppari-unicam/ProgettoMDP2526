@@ -7,10 +7,10 @@ import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
 
 import java.util.List;
 
-public class InventoryManager {
+public class GameManager {
     private final Player player;
 
-    public InventoryManager(Player player) {
+    public GameManager(Player player) {
         this.player = player;
     }
 
@@ -77,7 +77,7 @@ public class InventoryManager {
     /**
      * Ottiene le skill attualmente pronte per il combattimento.
      */
-    public List<it.unicam.cs.mpgc.rpg125571.model.skill.SkillEquipable> getActiveLoadout() {
+    public List<it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill> getActiveLoadout() {
         return player.getSkillLoadout().getEquippedSkills();
     }
 

@@ -14,7 +14,7 @@ public abstract class GameCharacter implements Damageable {
     private int level;
     private final Stats baseStats;
     private int currentHp;
-    Equipment equipment;
+    private Equipment equipment;
 
     // Buff da pozioni, skill, ecc. — hanno una durata in turni
     private final List<TemporaryModifier> temporaryModifiers = new ArrayList<>();
@@ -64,6 +64,18 @@ public abstract class GameCharacter implements Damageable {
     @Override
     public boolean isDead(){
         return currentHp == 0; // =0 morto (true) else vivo (false)
+    }
+
+    /*
+     * FIX (nuovo metodo): imposta direttamente gli HP correnti entro il range [0, maxHp].
+     * Usato da PlayerDeserializer per ripristinare lo stato salvato senza
+     * passare da takeDamage (che ha side-effect di combattimento).
+     *
+     * @param hp il valore di HP da ripristinare
+     */
+    public void setCurrentHp(int hp) {
+        int maxHp = baseStats.getMaxHp();
+        this.currentHp = Math.max(0, Math.min(hp, maxHp));
     }
 
     // BUFF TEMPORANEI:

@@ -2,20 +2,7 @@ package it.unicam.cs.mpgc.rpg125571.model.skill;
 
 import it.unicam.cs.mpgc.rpg125571.model.enums.Element;
 
-/**
- * Classe base per tutte le skill concrete.
- *
- * <p>Raccoglie lo stato condiviso (id, nome, descrizione, elemento, valore base)
- * e la formula di scaling, evitando duplicazione nelle sottoclassi. Non è pensata
- * per essere esposta come tipo pubblico: il codice esterno dovrebbe sempre
- * riferirsi a {@link Skill}, {@link AttackSkill} o {@link HealSkill}.</p>
- *
- * <p>La formula di scaling è:
- * <pre>
- *   effectiveValue = (baseValue + level * scaleFactor) * (1 + tier * tierBonus)
- * </pre>
- * Il risultato viene troncato a intero.</p>
- */
+
 public abstract class AbstractSkill implements Skill {
 
     private final int id;
@@ -45,15 +32,16 @@ public abstract class AbstractSkill implements Skill {
         this.baseValue = baseValue;
     }
 
-    /**
-     * Applica la formula di scaling al valore base della skill.
-     *
-     * <p>Usato internamente dalle sottoclassi per calcolare danno o cura
-     * senza riscrivere la logica di progressione.</p>
-     *
-     * @param level livello corrente della skill (parte da 1)
-     * @param tier  tier della skill (0 = nessun bonus tier)
-     * @return il valore scalato, troncato a intero
+    /*
+    Applies the scaling formula to the skill's base value.
+
+    Used internally by subclasses to calculate damage or healing
+    without rewriting the progression logic.
+
+    The scaling formula is:
+        effectiveValue = (baseValue + level * scaleFactor) * (1 + tier * tierBonus)
+
+    The result is truncated to an integer.
      */
     protected int calculateEffectiveValue(int level, int tier) {
         double value = (this.baseValue + (level * SCALE_FACTOR)) * (1 + (tier * TIER_BONUS));
@@ -72,10 +60,6 @@ public abstract class AbstractSkill implements Skill {
     @Override
     public Element getElement() { return element; }
 
-    /**
-     * Valore base della skill, prima dell'applicazione di livello e tier.
-     *
-     * @return il valore base
-     */
+    // Base value of the skill (damage, healing or defense), before applying level and tier
     public int getBaseValue() { return baseValue; }
 }

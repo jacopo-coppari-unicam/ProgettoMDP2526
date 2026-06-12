@@ -8,5 +8,7 @@ public enum Element {
     ICE,
     LIGHT,
     DARKNESS,
-    NEUTRAL
+    NEUTRAL,
+    LIGHTNING,
+    HOLY
 }

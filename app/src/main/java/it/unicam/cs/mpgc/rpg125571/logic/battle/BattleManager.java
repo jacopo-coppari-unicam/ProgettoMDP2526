@@ -1,11 +1,11 @@
 package it.unicam.cs.mpgc.rpg125571.logic.battle;
 
-import it.unicam.cs.mpgc.rpg125571.logic.enemy.LootChance;
+import it.unicam.cs.mpgc.rpg125571.logic.LootChance;
 import it.unicam.cs.mpgc.rpg125571.model.character.Enemy;
 import it.unicam.cs.mpgc.rpg125571.model.character.Player;
 import it.unicam.cs.mpgc.rpg125571.model.character.Stats;
 import it.unicam.cs.mpgc.rpg125571.model.enums.BattleState;
-import it.unicam.cs.mpgc.rpg125571.model.skill.SkillEquipable;
+import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
 
 public class BattleManager {
     private final Player player;
@@ -54,7 +54,7 @@ public class BattleManager {
             throw new IllegalArgumentException("Nessuna skill presente all'indice specificato");
         }
 
-        SkillEquipable selectedSkill = equippedSkills.get(skillIndex);
+        PlayerSkill selectedSkill = equippedSkills.get(skillIndex);
 
         // Esegue il cast logico della skill (può fare danno al nemico o curare il player)
         // Usiamo un downcast sicuro per applicare la mastery

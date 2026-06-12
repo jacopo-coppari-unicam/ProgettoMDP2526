@@ -1,0 +1,35 @@
+{
+  "name": "Eldrin il Paladino",
+  "level": 5,
+  "currentHp": 42,
+  "experience": 1250,
+  "stats": {
+    "atk": 15,
+    "def": 10,
+    "maxHp": 50
+  },
+  "inventoryItemIds": [
+    1,
+    5,
+    7
+  ],
+  "equipment": {
+    "WEAPON": 1,
+    "CHEST": 4
+  },
+  "skills": [
+    {
+      "skillId": 1,
+      "level": 2,
+      "masteryPoints": 10
+    },
+    {
+      "skillId": 4,
+      "level": 1,
+      "masteryPoints": 0
+    }
+  ],
+  "equippedSkillIds": [
+    1
+  ]
+}

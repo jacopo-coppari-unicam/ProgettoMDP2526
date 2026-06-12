@@ -1,244 +1,219 @@
 package it.unicam.cs.mpgc.rpg125571;
 
-import it.unicam.cs.mpgc.rpg125571.logic.InventoryManager;
-import it.unicam.cs.mpgc.rpg125571.logic.battle.BattleManager;
-import it.unicam.cs.mpgc.rpg125571.logic.enemy.EnemyLoader;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.unicam.cs.mpgc.rpg125571.model.character.Enemy;
-import it.unicam.cs.mpgc.rpg125571.model.character.Inventory;
 import it.unicam.cs.mpgc.rpg125571.model.character.Player;
-import it.unicam.cs.mpgc.rpg125571.model.character.Stats;
-import it.unicam.cs.mpgc.rpg125571.model.enums.BattleState;
-import it.unicam.cs.mpgc.rpg125571.model.enums.Element;
-import it.unicam.cs.mpgc.rpg125571.model.enums.EquipmentSlot;
-import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
-import it.unicam.cs.mpgc.rpg125571.model.item.*;
-import it.unicam.cs.mpgc.rpg125571.model.skill.*;
+import it.unicam.cs.mpgc.rpg125571.model.item.Item;
+import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
+import it.unicam.cs.mpgc.rpg125571.storage.*;
 
-import java.util.List;
-import java.util.Scanner;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class App {
-    private static InventoryManager gameController;
-    private static List<Enemy> enemyPool;
-    private static int currentEnemyIndex = 0;
-    private static final Scanner scanner = new Scanner(System.in);
+    /* TEST CARICAMENTO ITEM E SKILL
+    public static void main(String[] args) {
+        System.out.println("====== INIZIO TEST CARICAMENTO DATI (STORAGE) ======");
+
+        // Definiamo i percorsi dei file JSON.
+        // NOTA: Usando FileReader, questi percorsi partono dalla root del progetto.
+        String itemsPath = "app/src/main/resources/items.json";
+        String skillsPath = "app/src/main/resources/skills.json";
+
+        // ==========================================
+        // 1. TEST ITEM LOADER
+        // ==========================================
+        System.out.println("\n--- [ITEM LOADER] Caricamento in corso... ---");
+        ItemLoader itemLoader = new ItemLoader();
+
+        try {
+            itemLoader.loadItems(itemsPath);
+            List<Item> loadedItems = itemLoader.getItems();
+            System.out.println("[SUCCESS] Oggetti caricati: " + loadedItems.size());
+
+            for (Item itemtype : loadedItems) {
+                System.out.println(String.format(" -> [ID %d] %s (%s) - %s",
+                        itemtype.getId(), itemtype.getName(), itemtype.getType(), itemtype.getDescription()));
+            }
+
+            // Test recupero per ID singolo
+            int targetItemId = 1;
+            System.out.println("\n-> Test recupero Item con ID " + targetItemId + ":");
+            Item singleItem = itemLoader.getById(targetItemId);
+            if (singleItem != null) {
+                System.out.println("   Trovato: " + singleItem.getName());
+            } else {
+                System.out.println("   [WARNING] Nessun itemtype trovato con ID " + targetItemId);
+            }
+
+        } catch (Exception e) {
+            System.err.println("[ERROR] Errore critico durante il test degli Item: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // ==========================================
+        // 2. TEST SKILL LOADER
+        // ==========================================
+        System.out.println("\n--- [SKILL LOADER] Caricamento in corso... ---");
+        SkillLoader skillLoader = new SkillLoader();
+
+        try {
+            skillLoader.loadSkills(skillsPath);
+            List<Skill> loadedSkills = skillLoader.getSkills();
+            System.out.println("[SUCCESS] Abilità caricate: " + loadedSkills.size());
+
+            for (Skill skill : loadedSkills) {
+                System.out.println(String.format(" -> [ID %d] %s [%s] - %s",
+                        skill.getId(), skill.getName(), skill.getClass().getSimpleName(), skill.getDescription()));
+            }
+
+            // Test recupero per ID singolo
+            int targetSkillId = 101;
+            System.out.println("\n-> Test recupero Skill con ID " + targetSkillId + ":");
+            Skill singleSkill = skillLoader.getById(targetSkillId);
+            if (singleSkill != null) {
+                System.out.println("   Trovato: " + singleSkill.getName());
+            } else {
+                System.out.println("   [WARNING] Nessuna skill trovata con ID " + targetSkillId);
+            }
+
+        } catch (Exception e) {
+            System.err.println("[ERROR] Errore critico durante il test delle Skill: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("\n====== FINE TEST CARICAMENTO DATI ======");
+    }
+    */
 
     public static void main(String[] args) {
-        System.out.println("=== INIZIALIZZAZIONE GIOCO ===");
+        System.out.println("====== INIZIO TEST COMPLETO STORAGE RPG ======");
 
-        // 1. Inizializziamo i componenti richiesti dal tuo costruttore a 8 argomenti
-        Stats statsIniziali = new Stats(15, 5, 100);
-        Equipment equipIniziale = new Equipment();
-        Inventory inventarioIniziale = new Inventory();
-        java.util.List<PlayerSkill> listaSkillIniziale = new java.util.ArrayList<>();
-        SkillLoadout loadoutIniziale = new SkillLoadout();
-        int esperienzaIniziale = 0;
+        // Configurazione percorsi (Root del progetto con soluzione B)
+        String itemsPath = "app/src/main/resources/items.json";
+        String skillsPath = "app/src/main/resources/skills.json";
+        String playerSavePath = "app/src/main/resources/player_save.json";
+        String playerOutputPath = "app/src/main/resources/player_output.json";
 
-// 2. Creiamo l'istanza del Player passando esattamente gli 8 parametri richiesti
-        Player player = new Player(
-                "Eroe Unicam",
-                1,
-                statsIniziali,
-                equipIniziale,
-                inventarioIniziale,
-                listaSkillIniziale,
-                loadoutIniziale,
-                esperienzaIniziale
-        );
+        // =================================================================
+        // 1. CARICAMENTO DATI GLOBALI (ITEM & SKILL)
+        // =================================================================
+        ItemLoader itemLoader = new ItemLoader();
+        SkillLoader skillLoader = new SkillLoader();
 
-// 3. Colleghiamo il player appena creato al GameController
-        gameController = new InventoryManager(player);
-
-        // Di prova: regaliamo qualche pezzo nell'inventario per i test del menu
-        player.getInventory().addItem(new Weapon(1, "Spada di Ferro", ItemType.WEAPON, "+10 ATK", 10, EquipmentSlot.WEAPON));
-        player.getInventory().addItem(new Armor(2, "Maglai di ferro", ItemType.ARMOR, "+6 DEF", 6, EquipmentSlot.CHEST));
-
-        // Regaliamo qualche skill
-        String desc = "Una palla di fuoco incandescente";
-        DamageSkill FireBall = new DamageSkill(1, "Fire Ball", desc, Element.FIRE, 5);
-        PlayerSkill FireBallxPlayer = new PlayerSkill(FireBall);
-        FireBallxPlayer.gainMastery(500);
-        // AGGIUNGI QUESTO SUBITO SOTTO LA MAESTRIA:
-        player.unlockSkill(FireBallxPlayer);
-
-
-        // 2. Carichiamo i nemici dal file JSON fisso
-        enemyPool = EnemyLoader.loadEnemies("enemies.json");
-        if (enemyPool.isEmpty()) {
-            System.out.println("Impossibile avviare il gioco senza nemici nel file JSON.");
+        try {
+            System.out.println("\n[1/4] Caricamento configurazioni globali...");
+            itemLoader.loadItems(itemsPath);
+            skillLoader.loadSkills(skillsPath);
+            System.out.println(" -> Item caricati nel database: " + itemLoader.getItems().size());
+            System.out.println(" -> Skill caricate nel database: " + skillLoader.getSkills().size());
+        } catch (Exception e) {
+            System.err.println("[ERRORE CRITICO] Impossibile avviare il database di gioco: " + e.getMessage());
             return;
         }
 
-        // 3. Loop principale del gioco fuori dal combattimento
-        boolean running = true;
-        while (running && !player.isDead()) {
-            System.out.println("\n==========================================");
-            System.out.println(" HUB PRINCIPALE - " + player.getName() + " (Liv. " + player.getLevel() + ")");
-            System.out.println(" HP: " + player.getCurrentHp() + "/" + player.getCurrentStats().getMaxHp());
-            System.out.println("==========================================");
-            System.out.println("1. Gestisci Inventario & Equipaggiamento");
-            System.out.println("2. Gestisci Loadout Skill");
-            System.out.println("3. Cerca Prossimo Combattimento");
-            System.out.println("4. Esci dal gioco");
-            System.out.print("Scegli un'opzione: ");
+        // Creiamo l'istanza di Gson configurando sia il Serializer che il Deserializer
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Player.class, new PlayerSerializer())
+                .registerTypeAdapter(Player.class, new PlayerDeserializer(itemLoader, skillLoader))
+                .setPrettyPrinting() // Rende il JSON di output leggibile ad occhio umano
+                .create();
 
-            int choice = scanner.nextInt();
-            switch (choice) {
-                case 1 -> menuInventario();
-                case 2 -> menuSkill();
-                case 3 -> avviaCombattimento();
-                case 4 -> {
-                    System.out.println("Grazie per aver giocato!");
-                    running = false;
-                }
-                default -> System.out.println("Scelta non valida.");
-            }
-        }
+        // =================================================================
+        // 2. TEST DESERIALIZZAZIONE (LETTURA SALVATAGGIO PLAYER)
+        // =================================================================
+        Player player = null;
+        System.out.println("\n[2/4] Caricamento del salvataggio del Player...");
 
-        if (player.isDead()) {
-            System.out.println("\n[GAME OVER] Il tuo personaggio è caduto in battaglia.");
-        }
-    }
-
-    private static void menuInventario() {
-        System.out.println("\n--- IL TUO INVENTARIO ---");
-        List<Item> items = gameController.getInventoryItems();
-        if (items.isEmpty()) {
-            System.out.println("L'inventario è vuoto.");
+        if (!Files.exists(Paths.get(playerSavePath))) {
+            System.err.println("[ERRORE] Non trovo il file '" + playerSavePath + "'. Assicurati di averlo creato!");
             return;
         }
 
-        for (int i = 0; i < items.size(); i++) {
-            System.out.println((i + 1) + ". " + items.get(i).getName() + " [" + items.get(i).getType() + "]");
-        }
-        System.out.println((items.size() + 1) + ". Torna all'hub");
-        System.out.print("Seleziona un oggetto da equipaggiare: ");
+        try (FileReader reader = new FileReader(playerSavePath)) {
+            player = gson.fromJson(reader, Player.class);
 
-        int choice = scanner.nextInt();
-        int index = choice - 1;
+            System.out.println("[SUCCESS] Dati base ripristinati:");
+            System.out.println(" -> Nome Eroe: " + player.getName());
+            System.out.println(" -> Livello: " + player.getLevel() + " (XP: " + player.getExperience() + ")");
+            System.out.println(" -> Vita: " + player.getCurrentHp() + " / " + player.getBaseStats().getMaxHp());
 
-        if (choice > 0 && index < items.size()) {
-            Item selezionato = items.get(index);
-            boolean successo = gameController.equipItemFromInventory(selezionato);
-            if (successo) {
-                System.out.println("[OK] Hai equipaggiato: " + selezionato.getName());
-            } else {
-                System.out.println("[X] Questo oggetto non può essere equipaggiato (es. è una pozione)!");
+            System.out.println(" -> Inventario idratato con oggetti reali:");
+            player.getInventory().getItems().forEach(item ->
+                    System.out.println("    * [ID " + item.getId() + "] " + item.getName() + " - Tipo: " + item.getItemType())
+            );
+
+            System.out.println(" -> Abilità caricate:");
+            for (PlayerSkill ps : player.getSkillInventory()) {
+                System.out.println("    * " + ps.getSkill().getName() + " | Livello: " + ps.getCurrentLevel());
             }
-        }
-    }
-
-    private static void menuSkill() {
-        System.out.println("\n--- GESTIONE SKILL ---");
-        System.out.println("1. Equipaggia una skill nel Loadout");
-        System.out.println("2. Rimuovi una skill dal Loadout");
-        System.out.println("3. Torna all'hub");
-        System.out.print("Scegli: ");
-        int scelta = scanner.nextInt();
-
-        if (scelta == 1) {
-            List<PlayerSkill> owned = gameController.getOwnedSkills();
-            if (owned.isEmpty()) {
-                System.out.println("Non conosci ancora nessuna skill.");
-                return;
-            }
-            for (int i = 0; i < owned.size(); i++) {
-                PlayerSkill ps = owned.get(i);
-                System.out.println((i + 1) + ". " + ps.getSkill().getName() + " (Equipaggiata: ");
-            }
-            System.out.print("Scegli quale equipaggiare: ");
-            int idx = scanner.nextInt() - 1;
-            if (idx >= 0 && idx < owned.size()) {
-                boolean ok = gameController.equipSkillToLoadout(owned.get(idx));
-                System.out.println(ok ? "[OK] Skill equipaggiata nel loadout!" : "[X] Impossibile equipaggiare (Loadout pieno o già inserita).");
-            }
-        } else if (scelta == 2) {
-            List<SkillEquipable> active = gameController.getActiveLoadout();
-            if (active.isEmpty()) {
-                System.out.println("Il loadout è vuoto.");
-                return;
-            }
-            for (int i = 0; i < active.size(); i++) {
-                System.out.println((i + 1) + ". " + active.get(i).getSkill().getName());
-            }
-            System.out.print("Scegli quale rimuovere: ");
-            int idx = scanner.nextInt() - 1;
-            if (idx >= 0 && idx < active.size()) {
-                if (active.get(idx) instanceof PlayerSkill ps) {
-                    gameController.unequipSkillFromLoadout(ps);
-                    System.out.println("[OK] Skill rimossa.");
-                }
-            }
-        }
-    }
-
-    private static void avviaCombattimento() {
-        // 1. Estraiamo il nemico corrente dalla lista JSON
-        Enemy nemicoCorrente = enemyPool.get(currentEnemyIndex);
-
-        // Ripristiniamo gli HP del nemico per lo scontro se era già stato affrontato
-        // (Aggiungi un setter o un metodo heal sul nemico se necessario, oppure passa una nuova istanza)
-        nemicoCorrente.heal(nemicoCorrente.getCurrentStats().getMaxHp());
-
-        // 2. Creiamo il BattleManager logico
-        BattleManager battaglia = new BattleManager(gameController.getPlayer(), nemicoCorrente);
-
-        System.out.println("\n==========================================");
-        System.out.println(" INIZIA LO SCONTRO CON: " + nemicoCorrente.getName());
-        System.out.println("==========================================");
-
-        // 3. Questo loop gestisce i turni chiedendo l'input dell'utente finché la battaglia è IN_PROGRESS
-        while (battaglia.getState() == BattleState.IN_PROGRESS) {
-            System.out.println("\n--- " + gameController.getPlayer().getName() + " (" + gameController.getPlayer().getCurrentHp() + " HP) vs "
-                    + nemicoCorrente.getName() + " (" + nemicoCorrente.getCurrentHp() + " HP) ---");
-            System.out.println("1. Attacco Base");
-            System.out.println("2. Usa Skill");
-            System.out.print("Scegli l'azione: ");
-
-            int azione = scanner.nextInt();
-
-            if (azione == 1) {
-                // Esegue l'attacco del player + la risposta automatica del nemico + i tick dei modificatori
-                battaglia.executePlayerBaseAttack();
-            } else if (azione == 2) {
-                List<SkillEquipable> active = gameController.getActiveLoadout();
-                if (active.isEmpty()) {
-                    System.out.println("[X] Non hai skill equipaggiate nel loadout! Turno sprecato?");
-                    battaglia.executePlayerBaseAttack(); // Di riserva fa un attacco base
-                    continue;
-                }
-
-                System.out.println("\nSeleziona la skill:");
-                for (int i = 0; i < active.size(); i++) {
-                    System.out.println((i + 1) + ". " + active.get(i).getSkill().getName());
-                }
-                System.out.print("Scegli: ");
-                int skillIdx = scanner.nextInt() - 1;
-
-                if (skillIdx >= 0 && skillIdx < active.size()) {
-                    // Esegue la skill + risposta del nemico + tick modificatori
-                    battaglia.executePlayerSkill(skillIdx);
-                } else {
-                    System.out.println("Scelta non valida, perdi il turno!");
-                    battaglia.executePlayerBaseAttack();
-                }
-            }
+        } catch (Exception e) {
+            System.err.println("[ERRORE] Fallimento nel caricamento del Player: " + e.getMessage());
+            e.printStackTrace();
+            return;
         }
 
-        // 4. Risoluzione della battaglia a schermo
-        System.out.println("\n==========================================");
-        if (battaglia.getState() == BattleState.PLAYER_WON) {
-            System.out.println(" VITTORIA! " + nemicoCorrente.getName() + " è stato sconfitto!");
-            System.out.println(" Guadagnati " + nemicoCorrente.getExpReward() + " punti EXP.");
+        // =================================================================
+        // 3. SIMULAZIONE MODIFICHE IN-GAME (GAMEPLAY)
+        // =================================================================
+        System.out.println("\n[3/4] Simulazione modifiche al personaggio in gioco...");
 
-            // Passiamo al prossimo nemico del file JSON per il prossimo scontro
-            currentEnemyIndex = (currentEnemyIndex + 1) % enemyPool.size();
+        // Modifichiamo qualche parametro primitivo
+        player.setCurrentHp(50);
 
-            // Cura di fine scontro per non far morire subito il player nel prossimo livello
-            gameController.getPlayer().heal(30);
-        } else {
-            System.out.println(" SEI STATO SCONFITTO... GAME OVER.");
+        // Proviamo a raccogliere un nuovo oggetto dal database globale (es. l'Ascia da Guerra ID 2)
+        Item nuovoItem = itemLoader.getById(2);
+        if (nuovoItem != null) {
+            player.getInventory().addItem(nuovoItem);
+            System.out.println(" -> [GAMEPLAY] Il giocatore ha raccolto: " + nuovoItem.getName());
         }
-        System.out.println("==========================================");
+
+        // =================================================================
+        // 4. TEST SERIALIZZAZIONE (SALVATAGGIO SU NUOVO FILE JSON)
+        // =================================================================
+        System.out.println("\n[4/4] Scrittura del nuovo stato del Player su JSON...");
+        try (FileWriter writer = new FileWriter(playerOutputPath)) {
+            gson.toJson(player, writer);
+            System.out.println("[SUCCESS] Nuovo salvataggio generato in: " + playerOutputPath);
+            System.out.println(" -> Verifica il file per controllare che l'ID del nuovo oggetto (2) sia presente nell'array!");
+        } catch (Exception e) {
+            System.err.println("[ERRORE] Fallimento nel salvataggio del Player: " + e.getMessage());
+        }
+
+        // =================================================================
+// 5. TEST ENEMY & BOSS LOADER
+// =================================================================
+        System.out.println("\n--- [MINION & BOSS LOADER] Caricamento del bestiario... ---");
+        String enemyPath = "app/src/main/resources/enemies.json";
+        String bossPath = "app/src/main/resources/boss.json";
+
+        EnemyLoader enemyLoader = new EnemyLoader();
+        BossLoader bossLoader = new BossLoader();
+
+        try {
+            enemyLoader.loadEnemies(enemyPath);
+            bossLoader.loadBosses(bossPath);
+
+            System.out.println("[SUCCESS] Mostri comuni caricati: " + enemyLoader.getEnemies().size());
+            for (Enemy e : enemyLoader.getEnemies()) {
+                System.out.println(String.format(" -> Nemico: %s (Liv. %d) | HP: %d | EXP data: %d | Loot slot attivi: %d",
+                        e.getName(), e.getLevel(), e.getBaseStats().getMaxHp(), e.getExpReward(), e.getLootTable().size()));
+            }
+
+            System.out.println("\n[SUCCESS] Boss di fine zona caricati: " + bossLoader.getBosses().size());
+            for (Enemy b : bossLoader.getBosses()) {
+                System.out.println(String.format(" -> [BOSS] %s (Liv. %d) | HP: %d | Gold: %d | Drop epici garantiti: %d",
+                        b.getName(), b.getLevel(), b.getBaseStats().getMaxHp(), b.getGoldReward(), b.getLootTable().size()));
+            }
+
+        } catch (Exception e) {
+            System.err.println("[ERRORE] Fallimento nel caricamento del bestiario: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("\n====== FINE TEST COMPLETO STORAGE RPG ======");
     }
 }

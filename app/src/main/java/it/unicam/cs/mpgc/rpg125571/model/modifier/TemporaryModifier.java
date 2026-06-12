@@ -13,7 +13,7 @@ public class TemporaryModifier {
     private int remainingTurns;
 
 /*  Creates a temporary modifier.
-    modifier - The effect to apply; must not be null
+    modifier - The effect to apply, must not be null
     remainingTurns - The number of turns the effect will remain active (must be > 0)
     IllegalArgumentException if (remainingTurns) is less than or equal to zero */
     public TemporaryModifier(Modifier modifier, int remainingTurns) {

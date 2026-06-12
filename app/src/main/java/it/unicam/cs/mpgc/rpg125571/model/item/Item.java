@@ -5,6 +5,6 @@ import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 public interface Item{
     int getId();
     String getName();
-    ItemType getType();
+    ItemType getItemType();
     String getDescription();
 }

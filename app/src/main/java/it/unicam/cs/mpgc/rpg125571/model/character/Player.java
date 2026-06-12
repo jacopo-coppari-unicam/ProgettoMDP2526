@@ -4,6 +4,7 @@ import it.unicam.cs.mpgc.rpg125571.model.item.Equipment;
 import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
 import it.unicam.cs.mpgc.rpg125571.model.skill.SkillLoadout;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Player extends GameCharacter {
                   int experience) {
         super(name, level, baseStats, equipment);
         this.inventory = inventory;
-        this.skills = skills;
+        this.skills = new ArrayList<>(skills);
         this.skillLoadout = skillLoadout;
         this.experience = experience;
         this.experienceToNextLevel = level * 100;

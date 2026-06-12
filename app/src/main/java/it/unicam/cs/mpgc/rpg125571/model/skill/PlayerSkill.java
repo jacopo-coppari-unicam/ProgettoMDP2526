@@ -7,7 +7,7 @@ automatically and the counter is reset. */
 /* Implements [SkillEquipable] so that it can be inserted
 into a [SkillLoadout] without the latter knowing anything about the
 progression details. */
-public class PlayerSkill implements SkillEquipable {
+public class PlayerSkill{
 
     // Point mastery needed for level up
     private static final int MASTERY_THRESHOLD = 100;
@@ -18,11 +18,11 @@ public class PlayerSkill implements SkillEquipable {
     private boolean isEquipped;
 
     // Create a wrapper for the given skill, at level 1 with zero mastery
-    public PlayerSkill(Skill skill) {
-        if (skill == null) throw new IllegalArgumentException("Skill cannot be null");
+    public PlayerSkill(Skill skill, int level, int masteryPoints) {
+        if (skill == null) throw new IllegalArgumentException("Skill non può essere null");
         this.skill = skill;
-        this.currentLevel = 1;
-        this.masteryPoints = 0;
+        this.currentLevel = Math.max(1, level);
+        this.masteryPoints = Math.max(0, masteryPoints);
     }
 
     /* Adds mastery points and scales your level each time you exceed
@@ -36,8 +36,7 @@ public class PlayerSkill implements SkillEquipable {
         }
     }
 
-    // GETTER
-    @Override
+
     public Skill getSkill() { return skill; }
     // get Skill current level used in Skillcast (min 1)
     public int getCurrentLevel() { return currentLevel; }

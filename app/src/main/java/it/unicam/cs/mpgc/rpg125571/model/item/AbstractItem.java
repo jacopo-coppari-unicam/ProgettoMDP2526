@@ -22,7 +22,7 @@ public abstract class AbstractItem implements Item {
     public String getName(){ return name; }
 
     @Override
-    public ItemType getType(){ return type; }
+    public ItemType getItemType(){ return type; }
 
     @Override
     public String getDescription(){ return description; }

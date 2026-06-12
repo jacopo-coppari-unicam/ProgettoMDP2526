@@ -25,12 +25,11 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
 
+    implementation("com.google.code.gson:gson:2.13.2")
+
     implementation("org.openjfx:javafx-controls:25.0.3")
     implementation("org.openjfx:javafx-fxml:25.0.3")
     implementation("org.openjfx:javafx-web:25.0.3")
-
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.17.1")
 }
 
 javafx {

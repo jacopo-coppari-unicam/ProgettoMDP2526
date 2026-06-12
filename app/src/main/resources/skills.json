@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Colpo di Fuoco",
+    "type": "DAMAGE",
+    "description": "Una fiammata che brucia il nemico",
+    "element": "FIRE",
+    "baseValue": 18
+  },
+  {
+    "id": 2,
+    "name": "Lama Gelida",
+    "type": "DAMAGE",
+    "description": "Un taglio che congela i muscoli",
+    "element": "ICE",
+    "baseValue": 14
+  },
+  {
+    "id": 3,
+    "name": "Scossa Elettrica",
+    "type": "DAMAGE",
+    "description": "Scarica elettrica ad alta tensione",
+    "element": "LIGHTNING",
+    "baseValue": 16
+  },
+  {
+    "id": 4,
+    "name": "Guarigione Minore",
+    "type": "HEALING",
+    "description": "Rigenera lentamente le ferite",
+    "element": "HOLY",
+    "baseValue": 12
+  },
+  {
+    "id": 5,
+    "name": "Rinascita Naturale",
+    "type": "HEALING",
+    "description": "Forza vitale della natura",
+    "element": "EARTH",
+    "baseValue": 20
+  },
+  {
+    "id": 6,
+    "name": "Aura Sacra",
+    "type": "HEALING",
+    "description": "Un’aura che ristora il corpo",
+    "element": "HOLY",
+    "baseValue": 15
+  }
+]

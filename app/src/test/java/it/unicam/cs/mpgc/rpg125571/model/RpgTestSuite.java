@@ -2,7 +2,7 @@
 //
 //import it.unicam.cs.mpgc.rpg125571.model.character.*;
 //import it.unicam.cs.mpgc.rpg125571.model.enums.*;
-//import it.unicam.cs.mpgc.rpg125571.model.item.*;
+//import it.unicam.cs.mpgc.rpg125571.model.itemtype.*;
 //import it.unicam.cs.mpgc.rpg125571.model.modifier.*;
 //import it.unicam.cs.mpgc.rpg125571.model.skill.*;
 //

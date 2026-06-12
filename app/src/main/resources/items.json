@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "name": "Spada di Ferro",
+    "type": "WEAPON",
+    "description": "Una spada semplice ma efficace",
+    "damage": 10,
+    "slot": "WEAPON"
+  },
+  {
+    "id": 2,
+    "name": "Ascia da Guerra",
+    "type": "WEAPON",
+    "description": "Pesante e devastante",
+    "damage": 15,
+    "slot": "WEAPON"
+  },
+  {
+    "id": 3,
+    "name": "Elmo di Ferro",
+    "type": "ARMOR",
+    "description": "Protegge la testa",
+    "defence": 5,
+    "slot": "HELMET"
+  },
+  {
+    "id": 4,
+    "name": "Corazza di Ferro",
+    "type": "ARMOR",
+    "description": "Protezione del torso",
+    "defence": 12,
+    "slot": "CHEST"
+  },
+  {
+    "id": 5,
+    "name": "Pozione Cura Piccola",
+    "type": "POTION",
+    "description": "Cura nel tempo",
+    "modifiers": [
+      { "stat": "HP", "value": 5 }
+    ],
+    "duration": 3
+  },
+  {
+    "id": 6,
+    "name": "Pozione Forza",
+    "type": "POTION",
+    "description": "Aumenta la forza temporaneamente",
+    "modifiers": [
+      { "stat": "ATK", "value": 3 }
+    ],
+    "duration": 2
+  },
+  {
+    "id": 7,
+    "name": "Ferro Grezzo",
+    "type": "MATERIAL",
+    "description": "Materiale grezzo utilizzato per crafting"
+  }
+]

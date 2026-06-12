@@ -1,6 +1,8 @@
-package it.unicam.cs.mpgc.rpg125571.model.item;
+package it.unicam.cs.mpgc.rpg125571.model.item.itemtype;
 
 import it.unicam.cs.mpgc.rpg125571.model.character.GameCharacter;
+import it.unicam.cs.mpgc.rpg125571.model.item.AbstractItem;
+import it.unicam.cs.mpgc.rpg125571.model.item.Consumable;
 import it.unicam.cs.mpgc.rpg125571.model.modifier.Modifier;
 import it.unicam.cs.mpgc.rpg125571.model.modifier.TemporaryModifier;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;

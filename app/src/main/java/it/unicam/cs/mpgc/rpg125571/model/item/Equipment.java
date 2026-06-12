@@ -8,7 +8,7 @@ import java.util.*;
 /*  A class representing a character's active equipment (Loadout).
     It manages the unique association between a body slot enums EquipmentSlot
     WEAPON, HELMET, CHEST, LEGS, BOOTS
-    and the currently equipped item, exposing the logic for adding,
+    and the currently equipped itemtype, exposing the logic for adding,
     removing, and aggregating modifiers for all worn items. */
 public class Equipment {
     private final Map<EquipmentSlot, Equipable> equippedItems;
@@ -18,8 +18,8 @@ public class Equipment {
                 new EnumMap<>(EquipmentSlot.class);
     }
 
-    // Equip an item, if the Slot if the slot is already occupied
-    // the previous item is replaced
+    // Equip an itemtype, if the Slot if the slot is already occupied
+    // the previous itemtype is replaced
     public Equipable equip(Equipable item) {
         if(item == null)
             throw new IllegalArgumentException("Item cannot be null");
@@ -29,7 +29,7 @@ public class Equipment {
     // Removes whatever is equipped in the slot
     public Equipable unequip(EquipmentSlot slot) { return equippedItems.remove(slot); }
 
-    // Returns the equipped item to the slot
+    // Returns the equipped itemtype to the slot
     public Equipable getEquippedItem(EquipmentSlot slot) { return equippedItems.get(slot); }
 
     // Check if the slot is occupied

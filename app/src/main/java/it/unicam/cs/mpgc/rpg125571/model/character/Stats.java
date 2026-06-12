@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg125571.model.character;
 
+// Character stats of strength, defense, and health
 public class Stats {
-
     private int atk;
     private int def;
     private int maxHp;

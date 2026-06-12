@@ -1,0 +1,87 @@
+[
+  {
+    "id": 101,
+    "name": "Gorgone la Regina dei Serpenti",
+    "type": "BOSS",
+    "level": 12,
+    "stats": {
+      "atk": 28,
+      "def": 18,
+      "maxHp": 350
+    },
+    "expReward": 1000,
+    "goldReward": 200,
+    "lootTable": [
+      { "itemId": 3, "chance": 0.80 },
+      { "itemId": 6, "chance": 1.00 }
+    ]
+  },
+  {
+    "id": 102,
+    "name": "Il Colosso di Bronzo",
+    "type": "BOSS",
+    "level": 22,
+    "stats": {
+      "atk": 55,
+      "def": 45,
+      "maxHp": 900
+    },
+    "expReward": 3500,
+    "goldReward": 600,
+    "lootTable": [
+      { "itemId": 4, "chance": 1.00 },
+      { "itemId": 7, "chance": 1.00 }
+    ]
+  },
+  {
+    "id": 103,
+    "name": "Lich Malandor il Risorto",
+    "type": "BOSS",
+    "level": 32,
+    "stats": {
+      "atk": 90,
+      "def": 60,
+      "maxHp": 2200
+    },
+    "expReward": 10000,
+    "goldReward": 1500,
+    "lootTable": [
+      { "itemId": 2, "chance": 0.70 },
+      { "itemId": 5, "chance": 1.00 }
+    ]
+  },
+  {
+    "id": 104,
+    "name": "Generale Infernale Ignis",
+    "type": "BOSS",
+    "level": 42,
+    "stats": {
+      "atk": 140,
+      "def": 110,
+      "maxHp": 5000
+    },
+    "expReward": 25000,
+    "goldReward": 4000,
+    "lootTable": [
+      { "itemId": 2, "chance": 1.00 },
+      { "itemId": 6, "chance": 1.00 }
+    ]
+  },
+  {
+    "id": 105,
+    "name": "Bahamut il Re dei Draghi",
+    "type": "BOSS",
+    "level": 55,
+    "stats": {
+      "atk": 220,
+      "def": 180,
+      "maxHp": 12000
+    },
+    "expReward": 100000,
+    "goldReward": 15000,
+    "lootTable": [
+      { "itemId": 2, "chance": 1.00 },
+      { "itemId": 4, "chance": 1.00 }
+    ]
+  }
+]
