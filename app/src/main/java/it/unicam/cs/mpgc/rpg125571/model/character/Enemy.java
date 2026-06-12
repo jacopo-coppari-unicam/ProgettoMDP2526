@@ -1,9 +1,7 @@
 package it.unicam.cs.mpgc.rpg125571.model.character;
 
 import it.unicam.cs.mpgc.rpg125571.logic.enemy.LootChance;
-import it.unicam.cs.mpgc.rpg125571.model.enums.EnemyType;
 import it.unicam.cs.mpgc.rpg125571.model.item.Equipment;
-import it.unicam.cs.mpgc.rpg125571.model.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;

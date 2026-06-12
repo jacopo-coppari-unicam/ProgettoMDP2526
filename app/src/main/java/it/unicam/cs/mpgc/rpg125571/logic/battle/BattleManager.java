@@ -94,14 +94,17 @@ public class BattleManager {
     /**
      * Esamina la vitalità dei combattenti per aggiornare lo stato ed erogare ricompense.
      */
-    private void checkBattleStatus() {
+    public boolean checkBattleStatus() {
         if (enemy.isDead()) {
             this.state = BattleState.PLAYER_WON;
             finalizeBattle();
+            return true;
         } else if (player.isDead()) {
             this.state = BattleState.ENEMY_WON;
             finalizeBattle();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -122,7 +125,7 @@ public class BattleManager {
             player.addExperience(enemy.getExpReward());
 
             // Assegna l'oro (Assicurati di avere una variabile o un metodo per l'oro nel Player, es: player.addGold())
-            // player.addGold(enemy.getGoldReward());
+            player.addGold(enemy.getGoldReward());
 
             // 3. Calcolo del Loot basato sulle percentuali della LootTable
             for (LootChance loot : enemy.getLootTable()) {

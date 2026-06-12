@@ -9,10 +9,12 @@ import java.util.List;
 
 public class Weapon extends AbstractItem implements Equipable {
     private final int damage;
+    private final EquipmentSlot slot;
 
-    public Weapon(int id, String name, ItemType type, String description, int damage) {
+    public Weapon(int id, String name, ItemType type, String description, int damage, EquipmentSlot slot) {
         super(id, name, type, description);
         this.damage = damage;
+        this.slot = slot;
     }
 
     @Override

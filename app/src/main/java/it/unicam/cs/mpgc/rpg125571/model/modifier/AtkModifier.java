@@ -9,6 +9,7 @@ public class AtkModifier implements Modifier{
         this.value = value;
     }
 
+    // Applies the effect of the modifier to the Stats atk
     @Override
     public void apply(Stats stats){
         stats.setAtk(stats.getAtk() + value);

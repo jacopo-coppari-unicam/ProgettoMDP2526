@@ -10,6 +10,7 @@ public class MaxHpModifier implements Modifier {
         this.value = value;
     }
 
+    // Applies the effect of the modifier to the Stats maxHP
     @Override
     public void apply(Stats stats) {
         stats.setMaxHp(stats.getMaxHp() + value);

@@ -1,59 +1,35 @@
 package it.unicam.cs.mpgc.rpg125571.model.modifier;
 
-/**
- * Decoratore che aggiunge una durata a qualsiasi {@link Modifier}.
- *
- * <p>Ogni volta che un turno passa, {@link #tick()} va chiamato per
- * decrementare il contatore. Quando {@link #isExpired()} restituisce
- * {@code true} il modifier dovrebbe essere rimosso dal personaggio.</p>
- *
- * <p>Usato principalmente dalle pozioni, ma è generico abbastanza da
- * coprire qualsiasi buff/debuff con durata limitata.</p>
- */
+/* Adds duration to any [Modifier].
+    Each time a turn passes, tick() should be called to
+    decrement the counter. When isExpired() returns
+    (true), the modifier should be removed from the character. */
+
+/* Used primarily by potions, but is generic enough to
+   cover any buff/debuff with a limited duration.*/
 public class TemporaryModifier {
 
     private final Modifier modifier;
     private int remainingTurns;
 
-    /**
-     * Crea un modifier temporaneo.
-     *
-     * @param modifier      l'effetto da applicare; non deve essere {@code null}
-     * @param remainingTurns numero di turni per cui l'effetto rimane attivo (deve essere &gt; 0)
-     * @throws IllegalArgumentException se {@code remainingTurns} è minore o uguale a zero
-     */
+/*  Creates a temporary modifier.
+    modifier - The effect to apply; must not be null
+    remainingTurns - The number of turns the effect will remain active (must be > 0)
+    IllegalArgumentException if (remainingTurns) is less than or equal to zero */
     public TemporaryModifier(Modifier modifier, int remainingTurns) {
         if (remainingTurns <= 0) throw new IllegalArgumentException("remainingTurns must be > 0");
         this.modifier = modifier;
         this.remainingTurns = remainingTurns;
     }
 
-    /**
-     * Restituisce l'effetto incapsulato, pronto per essere passato a {@link ModifierSystem}.
-     *
-     * @return il modifier associato
-     */
+    // Returns the  effect, ready to be passed to [ModifierSystem]
     public Modifier getModifier() { return modifier; }
 
-    /**
-     * Decrementa di uno il contatore di turni rimanenti.
-     * Non ha effetto se il modifier è già scaduto.
-     */
     public void tick() {
         if (remainingTurns > 0) remainingTurns--;
     }
 
-    /**
-     * Indica se il modifier ha esaurito la sua durata e va rimosso.
-     *
-     * @return {@code true} se i turni rimanenti sono arrivati a zero
-     */
     public boolean isExpired() { return remainingTurns <= 0; }
 
-    /**
-     * Turni ancora attivi per questo modifier.
-     *
-     * @return turni rimanenti (0 significa scaduto)
-     */
     public int getRemainingTurns() { return remainingTurns; }
 }

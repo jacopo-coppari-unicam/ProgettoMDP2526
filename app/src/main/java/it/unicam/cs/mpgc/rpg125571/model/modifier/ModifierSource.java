@@ -2,13 +2,13 @@ package it.unicam.cs.mpgc.rpg125571.model.modifier;
 
 import java.util.List;
 
-/*  Rappresenta qualsiasi elemento del gioco che può fornire modificatori alle statistiche
-    - Item Eqipaggiati
-    - Pet (Future)
-    - Achivement (Future)
+/*  Represents any element in the game that can provide stat modifiers.
+    - Equipped Items
+    - Pets (Future)
+    - Achievements (Future)
 
-    si occupa di filtrare ciò che è attivo (es. oggetti equipaggiati, pet equipaggiati..)
-    e fornisce i Modifier che vengono in seguito aggiunti alle statistiche di base (baseStats)
+    Filters what's active (equipped items, equipped pets, etc.)
+    and provides modifiers that are then added to the base stats (baseStats).
 */
 
 public interface ModifierSource {

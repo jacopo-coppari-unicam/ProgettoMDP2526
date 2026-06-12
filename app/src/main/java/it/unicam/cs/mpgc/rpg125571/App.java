@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.rpg125571;
 
-import it.unicam.cs.mpgc.rpg125571.logic.GameController;
+import it.unicam.cs.mpgc.rpg125571.logic.InventoryManager;
 import it.unicam.cs.mpgc.rpg125571.logic.battle.BattleManager;
 import it.unicam.cs.mpgc.rpg125571.logic.enemy.EnemyLoader;
 import it.unicam.cs.mpgc.rpg125571.model.character.Enemy;
@@ -8,6 +8,7 @@ import it.unicam.cs.mpgc.rpg125571.model.character.Inventory;
 import it.unicam.cs.mpgc.rpg125571.model.character.Player;
 import it.unicam.cs.mpgc.rpg125571.model.character.Stats;
 import it.unicam.cs.mpgc.rpg125571.model.enums.BattleState;
+import it.unicam.cs.mpgc.rpg125571.model.enums.Element;
 import it.unicam.cs.mpgc.rpg125571.model.enums.EquipmentSlot;
 import it.unicam.cs.mpgc.rpg125571.model.enums.ItemType;
 import it.unicam.cs.mpgc.rpg125571.model.item.*;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class App {
-    private static GameController gameController;
+    private static InventoryManager gameController;
     private static List<Enemy> enemyPool;
     private static int currentEnemyIndex = 0;
     private static final Scanner scanner = new Scanner(System.in);
@@ -46,11 +47,20 @@ public class App {
         );
 
 // 3. Colleghiamo il player appena creato al GameController
-        gameController = new GameController(player);
+        gameController = new InventoryManager(player);
 
         // Di prova: regaliamo qualche pezzo nell'inventario per i test del menu
-        player.getInventory().addItem(new Weapon(1, "Spada di Ferro", ItemType.WEAPON, "+10 ATK", 10));
+        player.getInventory().addItem(new Weapon(1, "Spada di Ferro", ItemType.WEAPON, "+10 ATK", 10, EquipmentSlot.WEAPON));
         player.getInventory().addItem(new Armor(2, "Maglai di ferro", ItemType.ARMOR, "+6 DEF", 6, EquipmentSlot.CHEST));
+
+        // Regaliamo qualche skill
+        String desc = "Una palla di fuoco incandescente";
+        DamageSkill FireBall = new DamageSkill(1, "Fire Ball", desc, Element.FIRE, 5);
+        PlayerSkill FireBallxPlayer = new PlayerSkill(FireBall);
+        FireBallxPlayer.gainMastery(500);
+        // AGGIUNGI QUESTO SUBITO SOTTO LA MAESTRIA:
+        player.unlockSkill(FireBallxPlayer);
+
 
         // 2. Carichiamo i nemici dal file JSON fisso
         enemyPool = EnemyLoader.loadEnemies("enemies.json");
@@ -134,7 +144,7 @@ public class App {
             }
             for (int i = 0; i < owned.size(); i++) {
                 PlayerSkill ps = owned.get(i);
-                System.out.println((i + 1) + ". " + ps.getSkill().getName() + " (Equipaggiata: " + ps.isEquipped() + ")");
+                System.out.println((i + 1) + ". " + ps.getSkill().getName() + " (Equipaggiata: ");
             }
             System.out.print("Scegli quale equipaggiare: ");
             int idx = scanner.nextInt() - 1;

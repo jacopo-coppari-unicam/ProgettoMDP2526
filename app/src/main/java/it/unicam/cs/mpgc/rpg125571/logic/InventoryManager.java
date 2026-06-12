@@ -7,10 +7,10 @@ import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
 
 import java.util.List;
 
-public class GameController {
+public class InventoryManager {
     private final Player player;
 
-    public GameController(Player player) {
+    public InventoryManager(Player player) {
         this.player = player;
     }
 
@@ -56,29 +56,20 @@ public class GameController {
     // SEZIONE SKILL SYSTEM & LOADOUT
     // ==========================================
 
-    /**
-     * Ottiene tutte le skill sbloccate e possedute dal giocatore.
-     */
+    // Get all the unlocked skill of the player
     public List<PlayerSkill> getOwnedSkills() {
         return player.getSkillInventory();
     }
 
-    /**
-     * Inserisce una skill posseduta nel loadout attivo (Max 3 slot).
-     *
-     * @param playerSkill La skill da inserire nel loadout
-     * @return true se inserita con successo, false se il loadout è già pieno o se è già equipaggiata
-     */
+    // Add a Skill of the player (PlayerSkill) in the loadout
     public boolean equipSkillToLoadout(PlayerSkill playerSkill) {
-        if (player.getSkillLoadout().isFull()) {
-            return false;
-        }
-        return player.getSkillLoadout().equip(playerSkill);
+        return player.equipSkill(playerSkill);
     }
 
     /**
      * Rimuove una skill dal loadout attivo per liberare spazio.
      */
+    //
     public boolean unequipSkillFromLoadout(PlayerSkill playerSkill) {
         return player.getSkillLoadout().unequip(playerSkill);
     }

@@ -2,10 +2,14 @@ package it.unicam.cs.mpgc.rpg125571.model.item;
 
 import it.unicam.cs.mpgc.rpg125571.model.enums.EquipmentSlot;
 import it.unicam.cs.mpgc.rpg125571.model.modifier.Modifier;
-import it.unicam.cs.mpgc.rpg125571.model.modifier.ModifierSystem;
 
 import java.util.*;
 
+/*  A class representing a character's active equipment (Loadout).
+    It manages the unique association between a body slot enums EquipmentSlot
+    WEAPON, HELMET, CHEST, LEGS, BOOTS
+    and the currently equipped item, exposing the logic for adding,
+    removing, and aggregating modifiers for all worn items. */
 public class Equipment {
     private final Map<EquipmentSlot, Equipable> equippedItems;
 
@@ -14,45 +18,47 @@ public class Equipment {
                 new EnumMap<>(EquipmentSlot.class);
     }
 
-    /**
-     * Equipaggia un item.
-     * Se lo slot è già occupato,
-     * l'item precedente viene sostituito.
-     */
+    // Equip an item, if the Slot if the slot is already occupied
+    // the previous item is replaced
     public Equipable equip(Equipable item) {
         if(item == null)
-            throw new IllegalArgumentException("Item non può essere null");
+            throw new IllegalArgumentException("Item cannot be null");
         return equippedItems.put(item.getSlot(), item);
     }
 
-    // Rimuove ciò che è equipaggiato nello slot.
+    // Removes whatever is equipped in the slot
     public Equipable unequip(EquipmentSlot slot) { return equippedItems.remove(slot); }
 
-    // Restituisce l'Item equipaggiato nello slot
+    // Returns the equipped item to the slot
     public Equipable getEquippedItem(EquipmentSlot slot) { return equippedItems.get(slot); }
 
-    // Verifica se lo slot è occupato
+    // Check if the slot is occupied
     public boolean isOccupied(EquipmentSlot slot) { return equippedItems.containsKey(slot); }
 
-    // Restituisce tutti gli Item equipaggiati
+    // Returns all equipped items
     public Collection<Equipable> getEquippedItems() {
         return Collections.unmodifiableCollection(
                 equippedItems.values()
         );
     }
 
+    /*  Retrieves the complete list of all active modifiers provided by
+        currently equipped items.
+        A list of Modifier items applied to the character.*/
     public List<Modifier> getModifiers() {
         List<Modifier> mods = new ArrayList<>();
-        // Cicliamo su tutti gli oggetti Equipable presenti nella mappa
+        // Loop through all Equipable items in the (equippedItems) map values.
         for (Equipable item : equippedItems.values()) {
-            if (item != null) { // Sicurezza extra per evitare NullPointerException
+            // Safety check: Skip empty slots or null elements
+            // to prevent unexpected NullPointerException throws
+            if (item != null) {
                 mods.addAll(item.getModifiers());
             }
         }
         return mods;
     }
 
-    // Svuota tutti gli slot
+    // Clear all slots
     public void unequipAll() {
         equippedItems.clear();
     }

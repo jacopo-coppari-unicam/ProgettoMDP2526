@@ -10,6 +10,7 @@ public class DefModifier implements Modifier {
         this.value = value;
     }
 
+    // Applies the effect of the modifier to the Stats def
     @Override
     public void apply(Stats stats) {
         stats.setDef(stats.getDef() + value);
