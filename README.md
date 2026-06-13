@@ -1,7 +1,6 @@
-# 📌 Nome del Progetto
+# 📌 Heros Avventure
 
-Breve descrizione del progetto (2-3 righe):  
-Spiega cosa fa il programma e a cosa serve.
+Heros Avventure è un RPG single-player in cui il giocatore interpreta un eroe novizio che intraprende un viaggio di crescita attraverso combattimenti a turni contro mostri e boss. Progredendo nel gioco, il personaggio ottiene esperienza, sale di livello e raccoglie equipaggiamenti e oggetti che migliorano le sue statistiche, fino ad affrontare BOSS sempre più potenti.
 
 ---
 
@@ -32,43 +31,25 @@ cd <nome-cartella>
 
 ## 🤖 Uso di strumenti di AI
 
-Indicare **se e come** sono stati utilizzati strumenti di AI (es. ChatGPT, Copilot, ecc.).
-Descrivere in modo chiaro **per quali attività** e **con quale livello di intervento personale**.
+Durante la realizzazione del progetto ho utilizzato strumenti di Intelligenza Artificiale (ChatGPT / Google Gemini) come supporto tecnico e didattico.
 
-È importante dimostrare che:
-* il codice è stato **compreso**
-* l’AI è stata usata come **supporto**, non come sostituto
----
+In particolare, l’AI è stata utilizzata per:
 
-📌 Per una descrizione più dettagliata dell’uso dell’AI, utilizzare la **Wiki del repository**.
+creazione della logica matematica per un corretto avanzamento del giocatore e per la generazione dei nemici (implementata personalmente in seguito sotto forma di codice)
+risolvere problemi relativi alla configurazione del progetto Gradle e all’integrazione di JavaFX (build.gradle, librerie, dipendenze)
+supporto nella gestione dei file e del caricamento delle risorse JSON, principalmente per quanto riguarda la gestione dei path dei file
+chiarimenti sulla sintassi e sull’utilizzo di strutture dati e stream in Java
+supporto nella riorganizzazione della struttura del progetto (separazione della view creata con Scene Builder in più file FXML e successiva suddivisione del MainController in sotto-controller indipendenti)
 
+Tutta la logica di gioco, il sistema di combattimento, la gestione dell’inventario, il sistema di progressione del personaggio e la suddivisione delle responsabilità tra le varie componenti sono stati progettati e sviluppati in modo autonomo.
 
-### Esempi :
+##🧠 Contributo personale
 
-* Utilizzato ChatGPT per:
+Le principali componenti del progetto sviluppate in autonomia includono:
 
-  * comprendere concetti teorici (es. differenza tra classi e oggetti)
-  * chiarire errori di compilazione
-  * suggerimenti su struttura del codice
-
-* Utilizzato Copilot per:
-
-  * autocompletamento di metodi semplici
-  * generazione di codice ripetitivo (es. getter/setter)
-
-* Utilizzato ChatGPT per generare una prima versione di una funzione, poi:
-
-  * modificata e adattata manualmente
-  * testata e corretta personalmente
-
----
-
-Oppure:
-- Non sono stati utilizzati strumenti di AI
-
----
-
-
-## ⚠️ Nota
-
-Questo è un template: **modificare e adattare tutte le parti necessarie** in base al proprio progetto
+- progettazione e implementazione della logica di gioco e del sistema di progressione del personaggio (livelli, EXP e scaling delle statistiche)
+- sviluppo del sistema di combattimento a turni, con gestione delle azioni del giocatore e dei nemici
+- gestione dell’inventario e del sistema di equipaggiamento degli oggetti
+- implementazione del sistema di loot e drop dei nemici in base a probabilità
+- integrazione tra modello dati e interfaccia grafica JavaFX, mantenendo la separazione tra logica e view
+- realizzazione delle interfacce grafiche tramite Scene Builder e successiva riorganizzazione in più file FXML (riorganizzazione AI) con relativi controller dedicati (personale)
