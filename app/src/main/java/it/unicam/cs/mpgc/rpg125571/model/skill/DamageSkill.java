@@ -11,13 +11,13 @@ public class DamageSkill extends AbstractSkill implements AttackSkill {
     }
 
     @Override
-    public int getDamage(int level, int tier) {
-        return calculateEffectiveValue(level, tier);
+    public int getDamage(int level) {
+        return calculateEffectiveValue(level);
     }
 
     // Deals calculated damage to the target. The caster is not affected by this skill
     @Override
     public void cast(GameCharacter caster, GameCharacter target, int level, int tier) {
-        target.takeDamage(getDamage(level, tier));
+        target.takeDamage(getDamage(level));
     }
 }

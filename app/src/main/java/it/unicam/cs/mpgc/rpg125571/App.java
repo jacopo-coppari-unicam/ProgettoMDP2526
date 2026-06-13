@@ -89,7 +89,7 @@ public class App {
     }
     */
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         System.out.println("====== INIZIO TEST COMPLETO STORAGE RPG ======");
 
         // Configurazione percorsi (Root del progetto con soluzione B)
@@ -215,5 +215,6 @@ public class App {
         }
 
         System.out.println("\n====== FINE TEST COMPLETO STORAGE RPG ======");
-    }
+    }*/
+    
 }

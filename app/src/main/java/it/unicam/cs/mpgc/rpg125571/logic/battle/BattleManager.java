@@ -1,150 +1,144 @@
 package it.unicam.cs.mpgc.rpg125571.logic.battle;
 
-import it.unicam.cs.mpgc.rpg125571.logic.LootChance;
 import it.unicam.cs.mpgc.rpg125571.model.character.Enemy;
 import it.unicam.cs.mpgc.rpg125571.model.character.Player;
-import it.unicam.cs.mpgc.rpg125571.model.character.Stats;
-import it.unicam.cs.mpgc.rpg125571.model.enums.BattleState;
+import it.unicam.cs.mpgc.rpg125571.model.item.itemtype.Potion;
+import it.unicam.cs.mpgc.rpg125571.model.skill.AttackSkill;
+import it.unicam.cs.mpgc.rpg125571.model.skill.HealSkill;
 import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
 
+// Manages the flow of battle between Player and Enemy.
 public class BattleManager {
+
     private final Player player;
-    private final Enemy enemy;
-    private BattleState state;
+    private final Enemy  enemy;
+
+    // Cooldown pozione: può essere usata ogni 2 attacchi
+    private int attacksSinceLastPotion = 2;
+    private boolean battleEnded = false;
 
     public BattleManager(Player player, Enemy enemy) {
         this.player = player;
-        this.enemy = enemy;
-        this.state = BattleState.IN_PROGRESS;
+        this.enemy  = enemy;
     }
 
-    /**
-     * Esegue un attacco base del giocatore verso il nemico.
-     * Calcola il danno polimorficamente tramite le statistiche correnti (con modificatori).
-     * Se il nemico muore, assegna automaticamente i premi al giocatore.
-     */
-    public void executePlayerBaseAttack() {
-        if (state != BattleState.IN_PROGRESS) return;
+    // PLAYER ACTION
 
-        Stats playerStats = player.getCurrentStats();
-        Stats enemyStats = enemy.getCurrentStats();
+    // Basic Attack: Uses ATK from the player's current stats (includes equipment modifiers)
+    public int playerBaseAttack() {
+        if (battleEnded) return 0;
 
-        // Formula danno: Attacco - Difesa (Almeno 1 danno garantito)
-        int damage = Math.max(1, playerStats.getAtk() - enemyStats.getDef());
+        // getCurrentStats() include equipment bonus
+        int atk    = player.getCurrentStats().getAtk();
+        int def    = enemy.getBaseStats().getDef();
+        int damage = Math.max(1, atk - def);
+
         enemy.takeDamage(damage);
-
-        checkBattleStatus();
-
-        // Se il nemico è ancora vivo, risponde immediatamente
-        if (state == BattleState.IN_PROGRESS) {
-            executeEnemyTurn();
-        }
+        attacksSinceLastPotion++;
+        return damage;
     }
 
     /**
-     * Consuma il turno del giocatore lanciando una skill equipaggiata.
-     * * @param skillIndex L'indice della skill all'interno del loadout (0, 1 o 2)
-     * @throws IllegalArgumentException se l'indice non corrisponde a una skill attiva
+     * Usa una skill dal loadout.
+     * Cast delega alla skill concreta tramite Skill.cast(); in più calcola
+     * il danno/cura e lo applica al target corretto.
+     *
+     * @param playerSkill la skill scelta dal loadout
+     * @return valore numerico dell'effetto (danno o cura), 0 se tipo sconosciuto
      */
-    public void executePlayerSkill(int skillIndex) {
-        if (state != BattleState.IN_PROGRESS) return;
+    public int playerSkillAction(PlayerSkill playerSkill) {
+        if (battleEnded) return 0;
 
-        var equippedSkills = player.getSkillLoadout().getEquippedSkills();
-        if (skillIndex < 0 || skillIndex >= equippedSkills.size()) {
-            throw new IllegalArgumentException("Nessuna skill presente all'indice specificato");
+        int level  = playerSkill.getCurrentLevel();
+
+        if (playerSkill.getSkill() instanceof AttackSkill attackSkill) {
+            int def    = enemy.getBaseStats().getDef();
+            int raw    = attackSkill.getDamage(level);
+            int damage = Math.max(1, raw - def);
+            enemy.takeDamage(damage);
+            attacksSinceLastPotion++;
+            return damage;
+        } else if (playerSkill.getSkill() instanceof HealSkill healSkill) {
+            int amount = healSkill.getHealAmount(level);
+            player.heal(amount);
+            attacksSinceLastPotion++;
+            return amount;
         }
 
-        PlayerSkill selectedSkill = equippedSkills.get(skillIndex);
-
-        // Esegue il cast logico della skill (può fare danno al nemico o curare il player)
-        // Usiamo un downcast sicuro per applicare la mastery
-        if (selectedSkill instanceof it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill ps) {
-            ps.getSkill().cast(player, enemy, ps.getCurrentLevel(), 0);
-            ps.gainMastery(25); // Avanzamento maestria
-        } else {
-            selectedSkill.getSkill().cast(player, enemy, 1, 0);
-        }
-
-        checkBattleStatus();
-
-        // Se il nemico sopravvive al cast della skill, esegue il suo contrattacco
-        if (state == BattleState.IN_PROGRESS) {
-            executeEnemyTurn();
-        }
+        return 0;
     }
 
-    /**
-     * Gestisce la logica di attacco del nemico ed esegue i passaggi di fine turno
-     * (come il decremento dei buff temporanei).
-     */
-    private void executeEnemyTurn() {
-        Stats enemyStats = enemy.getCurrentStats();
-        Stats playerStats = player.getCurrentStats();
+    // The potion can only be used every 2 attacks.
+    public boolean canUsePotion() {
+        return attacksSinceLastPotion >= 2;
+    }
 
-        int damage = Math.max(1, enemyStats.getAtk() - playerStats.getDef());
+    // Use a potion on the player, apply TemporaryModifiers to the GameCharacter
+    public boolean usePotion(Potion potion) {
+        if (battleEnded || !canUsePotion()) return false;
+        potion.use(player);          // Consumable.use(GameCharacter)
+        attacksSinceLastPotion = 0;
+        return true;
+    }
+
+
+    // ENEMY TURN
+
+    // The enemy attacks the player
+    // Uses the enemy's base stats and the player's current stats (including temporary buffs)..
+    public int enemyTurn() {
+        if (battleEnded || enemy.isDead()) return 0;
+
+        int atk    = enemy.getBaseStats().getAtk();
+        int def    = player.getCurrentStats().getDef();
+        int damage = Math.max(1, atk - def);
+
         player.takeDamage(damage);
 
-        // Fase di Fine Turno: i modificatori temporanei perdono 1 turno di durata
         player.tickTemporaryModifiers();
-        enemy.tickTemporaryModifiers();
 
-        checkBattleStatus();
+        return damage;
     }
 
-    /**
-     * Esamina la vitalità dei combattenti per aggiornare lo stato ed erogare ricompense.
-     */
-    public boolean checkBattleStatus() {
+    // Checks whether the battle is over and handles the consequences.
+    public void checkBattleEnd() {
+        if (battleEnded) return;
+
         if (enemy.isDead()) {
-            this.state = BattleState.PLAYER_WON;
-            finalizeBattle();
-            return true;
+            onVictory();
+            battleEnded = true;
         } else if (player.isDead()) {
-            this.state = BattleState.ENEMY_WON;
-            finalizeBattle();
-            return true;
+            onDefeat();
+            battleEnded = true;
         }
-        return false;
     }
 
-    /**
-     * Operazioni di pulizia e distribuzione dell'esperienza a incontro concluso.
-     */
-    /**
-     * Operazioni di pulizia, distribuzione dell'esperienza e calcolo del Loot
-     * a incontro concluso.
-     */
-    private void finalizeBattle() {
-        // 1. Rimuove tutti i buff/debuff temporanei accumulati durante lo scontro
+    public boolean isBattleEnded() { return battleEnded; }
+    public boolean isPlayerAlive()  { return !player.isDead(); }
+    public boolean isEnemyAlive()   { return !enemy.isDead(); }
+
+    public int getPotionCooldown() {
+        return Math.max(0, 2 - attacksSinceLastPotion);
+    }
+
+    // END OF THE BATTLE
+
+    private void onVictory() {
+        player.addExperience(enemy.getExpReward());
+        player.addGold(enemy.getGoldReward());
+        // Restores HP to the current maximum (includes equipment bonuses)
+        player.setCurrentHp(player.getCurrentStats().getMaxHp());
         player.clearTemporaryModifiers();
-        enemy.clearTemporaryModifiers();
-
-        // 2. Se ha vinto il giocatore, distribuiamo le ricompense caricate da JSON
-        if (state == BattleState.PLAYER_WON) {
-            // Assegna l'esperienza
-            player.addExperience(enemy.getExpReward());
-
-            // Assegna l'oro (Assicurati di avere una variabile o un metodo per l'oro nel Player, es: player.addGold())
-            player.addGold(enemy.getGoldReward());
-
-            // 3. Calcolo del Loot basato sulle percentuali della LootTable
-            for (LootChance loot : enemy.getLootTable()) {
-                // Math.random() genera un numero tra 0.0 e 1.0.
-                // Se è minore o uguale alla chance (es. 0.30 per il 30%), il drop ha successo!
-                if (Math.random() <= loot.getChance()) {
-
-                    // Recupera l'oggetto reale tramite l'ID usando il tuo catalogo o ItemPool
-                    // e aggiungilo direttamente all'inventario del giocatore
-
-                    // Item itemDroppato = ItemCatalog.getById(loot.getItemId());
-                    // player.getInventory().addItem(itemDroppato);
-                }
-            }
-        }
     }
 
-    // GETTER METODI PER CONNETTERE INTERFACCE O TEST
-    public BattleState getState() { return state; }
+    private void onDefeat() {
+        // Restores HP to allow the player to continue
+        player.setCurrentHp(player.getBaseStats().getMaxHp());
+        player.clearTemporaryModifiers();
+    }
+
+    // UI USEFUL GETTERS
+
     public Player getPlayer() { return player; }
-    public Enemy getEnemy() { return enemy; }
+    public Enemy  getEnemy()  { return enemy;  }
 }

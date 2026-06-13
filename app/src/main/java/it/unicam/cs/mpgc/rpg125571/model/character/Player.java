@@ -75,9 +75,7 @@ public class Player extends GameCharacter {
     public SkillLoadout getSkillLoadout() { return skillLoadout; }
 
 
-    // ---------------------------
-    // | EXPERIENCE AND LEVEL UP |
-    // ---------------------------
+    // EXPERIENCE AND LEVEL UP
     public void addExperience(int amount) {
         if (amount <= 0) return;
         this.experience += amount;

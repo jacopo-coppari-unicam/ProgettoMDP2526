@@ -14,15 +14,6 @@ public abstract class AbstractSkill implements Skill {
     private static final int SCALE_FACTOR = 3;
     private static final double TIER_BONUS = 0.20;
 
-    /**
-     * Inizializza i campi comuni a tutte le skill.
-     *
-     * @param id          identificatore univoco
-     * @param name        nome della skill
-     * @param description descrizione dell'effetto
-     * @param element     elemento della skill
-     * @param baseValue   valore base prima dello scaling
-     */
     protected AbstractSkill(int id, String name, String description,
                             Element element, int baseValue) {
         this.id = id;
@@ -43,7 +34,9 @@ public abstract class AbstractSkill implements Skill {
 
     The result is truncated to an integer.
      */
-    protected int calculateEffectiveValue(int level, int tier) {
+    public int calculateEffectiveValue(int level) {
+        // Level 10 -> Tier 1, Level 20 -> Tier 2
+        int tier = level / 10;
         double value = (this.baseValue + (level * SCALE_FACTOR)) * (1 + (tier * TIER_BONUS));
         return (int) value;
     }

@@ -11,14 +11,14 @@ public class HealingSkill extends AbstractSkill implements HealSkill {
     }
 
     @Override
-    public int getHealAmount(int level, int tier) {
-        return calculateEffectiveValue(level, tier);
+    public int getHealAmount(int level) {
+        return calculateEffectiveValue(level);
     }
 
     // Apply a heal effect to the caster
     @Override
     public void cast(GameCharacter caster, GameCharacter target, int level, int tier) {
-        caster.heal(getHealAmount(level, tier));
+        caster.heal(getHealAmount(level));
     }
 }
 
