@@ -8,10 +8,7 @@ import it.unicam.cs.mpgc.rpg125571.storage.PlayerDeserializer;
 import it.unicam.cs.mpgc.rpg125571.storage.PlayerSerializer;
 import it.unicam.cs.mpgc.rpg125571.storage.SkillLoader;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class SaveManager {
 
@@ -36,12 +33,16 @@ public class SaveManager {
 
     // Sava Player in file JSON
     public boolean saveGame(Player player, String filePath) {
-        try (FileWriter writer = new FileWriter(filePath)) {
+        File file = new File(filePath);
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        try (Writer writer = new FileWriter(file)) {
             gson.toJson(player, writer);
-            System.out.println("[SaveManager] Partita salvata in: " + filePath);
             return true;
         } catch (IOException e) {
-            System.err.println("[SaveManager] Errore salvataggio: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -50,15 +51,12 @@ public class SaveManager {
     public Player loadGame(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
-            System.err.println("[SaveManager] File non trovato: " + filePath);
             return null;
         }
-        try (FileReader reader = new FileReader(file)) {
-            Player loaded = gson.fromJson(reader, Player.class);
-            System.out.println("[SaveManager] Caricato: " + loaded.getName());
-            return loaded;
-        } catch (IOException e) {
-            System.err.println("[SaveManager] Errore caricamento: " + e.getMessage());
+        try (Reader reader = new FileReader(file)) {
+            return gson.fromJson(reader, Player.class);
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
