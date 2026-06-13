@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="it.unicam.cs.mpgc.rpg125571.view.CombatController"
+      alignment="CENTER" spacing="15" style="-fx-padding: 15;">
+
+    <Label text="DIARIO DI VIAGGIO"
+           style="-fx-font-size: 20px; -fx-text-fill: gold; -fx-font-weight: bold;"/>
+
+    <TextArea fx:id="eventLogArea"
+              editable="false"
+              prefWidth="600" prefHeight="320"
+              wrapText="true"
+              style="-fx-control-inner-background: #121212; -fx-text-fill: #00ff00; -fx-font-family: 'Consolas';"
+              promptText="Eventi di gioco, battaglie e dialoghi..."/>
+
+    <HBox alignment="CENTER" spacing="15">
+        <Button fx:id="searchEnemyButton" text="⚔️ Cerca Nemico"
+                prefWidth="180" onAction="#handleSearchEnemy"
+                style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button fx:id="bossButton" text="👑 Sfida Boss"
+                prefWidth="180" onAction="#handleChallengeBoss"
+                style="-fx-background-color: #705000; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>

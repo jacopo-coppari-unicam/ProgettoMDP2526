@@ -27,13 +27,11 @@ public class EnemyLoader {
             for (JsonElement elem : array) {
                 JsonObject obj = elem.getAsJsonObject();
 
-                // 1. Dati identificativi e ricompense puri
                 String name = obj.get("name").getAsString();
                 int level = obj.get("level").getAsInt();
                 int expReward = obj.get("expReward").getAsInt();
                 int goldReward = obj.get("goldReward").getAsInt();
 
-                // 2. Idratazione Stats
                 JsonObject statsJson = obj.getAsJsonObject("stats");
                 Stats stats = new Stats(
                         statsJson.get("atk").getAsInt(),
@@ -41,7 +39,6 @@ public class EnemyLoader {
                         statsJson.get("maxHp").getAsInt()
                 );
 
-                // 3. Idratazione LootTable (LootChance)
                 List<LootChance> lootTable = new ArrayList<>();
                 JsonArray lootArray = obj.getAsJsonArray("lootTable");
                 if (lootArray != null) {
@@ -50,13 +47,10 @@ public class EnemyLoader {
                         int itemId = lootObj.get("itemId").getAsInt();
                         double chance = lootObj.get("chance").getAsDouble();
 
-                        // Utilizziamo il costruttore di LootChance (assumendo sia id, chance)
                         lootTable.add(new LootChance(itemId, chance));
                     }
                 }
 
-                // 4. Istanziazione polimorfa tramite il tuo costruttore completo
-                // Passiamo un'istanza vuota di Equipment come richiesto dal super
                 Enemy enemy = new Enemy(name, level, stats, new Equipment(), expReward, goldReward, lootTable);
 
                 enemies.add(enemy);

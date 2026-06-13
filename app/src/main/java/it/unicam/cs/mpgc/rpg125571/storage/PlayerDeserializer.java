@@ -15,21 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Deserializza un {@link Player} dal JSON prodotto da {@link PlayerSerializer}.
- * Utilizza ItemLoader e SkillLoader per risolvere i riferimenti agli ID degli oggetti
- * e delle abilità nel mondo di gioco.
- */
+
 public class PlayerDeserializer implements JsonDeserializer<Player> {
 
     private final ItemLoader itemLoader;
     private final SkillLoader skillLoader;
 
-    /**
-     * Costruttore aggiornato che accetta i nuovi componenti di storage.
-     * I loader devono aver già effettuato il caricamento dei dati (es. tramite loadItems/loadSkills)
-     * prima che venga invocata la deserializzazione del giocatore.
-     */
+
     public PlayerDeserializer(ItemLoader itemLoader, SkillLoader skillLoader) {
         this.itemLoader = itemLoader;
         this.skillLoader = skillLoader;
@@ -40,13 +32,12 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
                               JsonDeserializationContext context) throws JsonParseException {
         JsonObject root = json.getAsJsonObject();
 
-        // ── Dati primitivi ────────────────────────────────────────────────
         String name       = root.get("name").getAsString();
         int    level      = root.get("level").getAsInt();
         int    currentHp  = root.get("currentHp").getAsInt();
         int    experience = root.get("experience").getAsInt();
+        int    gold       = root.get("gold").getAsInt();
 
-        // ── Stats ─────────────────────────────────────────────────────────
         JsonObject statsJson = root.getAsJsonObject("stats");
         Stats stats = new Stats(
                 statsJson.get("atk").getAsInt(),
@@ -54,7 +45,6 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
                 statsJson.get("maxHp").getAsInt()
         );
 
-        // ── Inventario ────────────────────────────────────────────────────
         Inventory inventory = new Inventory();
         if (root.has("inventoryItemIds")) {
             for (JsonElement idElem : root.getAsJsonArray("inventoryItemIds")) {
@@ -68,7 +58,6 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
             }
         }
 
-        // ── Equipment ─────────────────────────────────────────────────────
         Equipment equipment = new Equipment();
         if (root.has("equipment")) {
             JsonObject equipJson = root.getAsJsonObject("equipment");
@@ -90,7 +79,6 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
             }
         }
 
-        // ── Skill possedute ───────────────────────────────────────────────
         List<PlayerSkill> skills = new ArrayList<>();
         if (root.has("skills")) {
             for (JsonElement elem : root.getAsJsonArray("skills")) {
@@ -109,7 +97,6 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
             }
         }
 
-        // ── Loadout attivo ────────────────────────────────────────────────
         SkillLoadout loadout = new SkillLoadout();
         if (root.has("equippedSkillIds")) {
             for (JsonElement idElem : root.getAsJsonArray("equippedSkillIds")) {
@@ -125,11 +112,9 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
             }
         }
 
-        // ── Costruzione Player ────────────────────────────────────────────
         Player player = new Player(name, level, stats, equipment,
-                inventory, skills, loadout, experience);
+                inventory, skills, loadout, experience, gold);
 
-        // ripristino diretto degli HP salvati tramite setCurrentHp().
         player.setCurrentHp(currentHp);
 
         return player;

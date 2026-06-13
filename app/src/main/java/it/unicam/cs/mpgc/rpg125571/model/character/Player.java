@@ -18,13 +18,14 @@ public class Player extends GameCharacter {
 
     public Player(String name, int level, Stats baseStats, Equipment equipment,
                   Inventory inventory, List<PlayerSkill> skills, SkillLoadout skillLoadout,
-                  int experience) {
+                  int experience, int gold) {
         super(name, level, baseStats, equipment);
         this.inventory = inventory;
         this.skills = new ArrayList<>(skills);
         this.skillLoadout = skillLoadout;
         this.experience = experience;
         this.experienceToNextLevel = level * 100;
+        this.gold = gold;
     }
 
     public Inventory getInventory() { return inventory; }

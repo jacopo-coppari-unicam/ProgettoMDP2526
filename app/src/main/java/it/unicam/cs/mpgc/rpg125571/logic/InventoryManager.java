@@ -11,7 +11,7 @@ import java.util.List;
 
 public class InventoryManager {
 
-    private static final int MAX_SLOTS = 100;
+    private static final int MAX_SLOTS = 500;
     private final Player player;
 
     public InventoryManager(Player player) {
@@ -36,16 +36,12 @@ public class InventoryManager {
         return player.getInventory().getItems().size() < MAX_SLOTS;
     }
 
-
     public boolean addItem(Item item) {
-        if (!hasFreeSlot()) {
-            System.out.println("[InventoryManager] Inventario pieno, impossibile aggiungere: " + item.getName());
+        if (!hasFreeSlot())
             return false;
-        }
         player.getInventory().addItem(item);
         return true;
     }
-
 
     public boolean removeItem(Item item) {
         return player.getInventory().removeItem(item);

@@ -16,14 +16,13 @@ public abstract class GameCharacter implements Damageable {
     private int currentHp;
     private Equipment equipment;
 
-    // Buff da pozioni, skill, ecc. — hanno una durata in turni
+    // Buffs from potions, skills, etc. — last for turns
     private final List<TemporaryModifier> temporaryModifiers = new ArrayList<>();
 
     protected void incrementLevel() {
         this.level++;
     }
-
-    // Costruisce un personaggio inizializzando gli HP al massimo delle stat base.
+    // Builds a character by initializing HP to the maximum base stats.
     public GameCharacter(String name, int level, Stats baseStats, Equipment equipment) {
         this.name = name;
         this.level = level;
@@ -33,13 +32,13 @@ public abstract class GameCharacter implements Damageable {
     }
 
     /*
-     Calcola le statistiche finali del personaggio nel momento corrente.
+        Calculates the character's final stats at the current time.
 
-     Aggrega i modifier provenienti dall'equipaggiamento e dai buff
-     temporanei attivi, quindi li applica a una copia delle stat base
-     tramite ModifierSystem. Le stat base non vengono mai mutate.
+        Aggregates modifiers from equipment and active temporary buffs
+        and applies them to a copy of the base stats
+        via ModifierSystem. The base stats are never modified.
 
-     return una nuova istanza di Stats con tutti i modifier applicati
+        Returns a new Stats instance with all modifiers applied.
      */
     public Stats getCurrentStats() {
         List<Modifier> allModifiers = new ArrayList<>(equipment.getModifiers());
@@ -66,29 +65,23 @@ public abstract class GameCharacter implements Damageable {
         return currentHp == 0; // =0 morto (true) else vivo (false)
     }
 
-    /*
-     * FIX (nuovo metodo): imposta direttamente gli HP correnti entro il range [0, maxHp].
-     * Usato da PlayerDeserializer per ripristinare lo stato salvato senza
-     * passare da takeDamage (che ha side-effect di combattimento).
-     *
-     * @param hp il valore di HP da ripristinare
-     */
+
     public void setCurrentHp(int hp) {
         int maxHp = baseStats.getMaxHp();
         this.currentHp = Math.max(0, Math.min(hp, maxHp));
     }
 
-    // BUFF TEMPORANEI:
+    // TEMPORARY BUFF:
     //  - Potion
     //  - (Future)
 
-    // Aggiunge un buff temporaneo al personaggio.
+    // Adds a temporary buff to the character.
     public void addTemporaryModifier(TemporaryModifier modifier) {
         temporaryModifiers.add(modifier);
     }
 
-    // Decrementa di un turno tutti i buff temporanei attivi e
-    // rimuove quelli scaduti.
+    // Decrease all active temporary buffs by one turn and
+    // remove expired ones.
     public void tickTemporaryModifiers() {
         temporaryModifiers.forEach(TemporaryModifier::tick);
         temporaryModifiers.removeIf(TemporaryModifier::isExpired);

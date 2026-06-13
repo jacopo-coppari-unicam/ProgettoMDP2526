@@ -27,13 +27,11 @@ public class BossLoader {
             for (JsonElement elem : array) {
                 JsonObject obj = elem.getAsJsonObject();
 
-                // 1. Lettura dati primitivi e ricompense epiche
                 String name = obj.get("name").getAsString();
                 int level = obj.get("level").getAsInt();
                 int expReward = obj.get("expReward").getAsInt();
                 int goldReward = obj.get("goldReward").getAsInt();
 
-                // 2. Lettura statistiche Boss scale-up
                 JsonObject statsJson = obj.getAsJsonObject("stats");
                 Stats stats = new Stats(
                         statsJson.get("atk").getAsInt(),
@@ -41,7 +39,7 @@ public class BossLoader {
                         statsJson.get("maxHp").getAsInt()
                 );
 
-                // 3. Tabella Loot del Boss
+                // BOSS TABLE
                 List<LootChance> lootTable = new ArrayList<>();
                 JsonArray lootArray = obj.getAsJsonArray("lootTable");
                 if (lootArray != null) {
@@ -54,7 +52,6 @@ public class BossLoader {
                     }
                 }
 
-                // 4. Creazione dell'istanza Boss (come Enemy potente)
                 Enemy boss = new Enemy(name, level, stats, new Equipment(), expReward, goldReward, lootTable);
 
                 bosses.add(boss);

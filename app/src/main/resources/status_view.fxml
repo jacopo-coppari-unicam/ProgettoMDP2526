@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<HBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="it.unicam.cs.mpgc.rpg125571.view.StatusController"
+      spacing="20" alignment="CENTER_LEFT"
+      style="-fx-background-color: #3a2a1d; -fx-border-color: gold; -fx-border-width: 0 0 2 0;">
+    <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
+
+    <Label text="⚔ RPG 125571 - HUB CENTRALE"
+           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: gold;"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Label fx:id="goldLabel"  text="Gold: 0"  style="-fx-font-size: 18px; -fx-text-fill: #ffd700;"/>
+    <Label fx:id="levelLabel" text="Level: 1" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+</HBox>

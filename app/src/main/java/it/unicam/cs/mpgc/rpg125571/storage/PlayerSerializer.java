@@ -9,41 +9,31 @@ import it.unicam.cs.mpgc.rpg125571.model.skill.PlayerSkill;
 
 import java.lang.reflect.Type;
 
-/*
-    Serializes a [Player] to JSON, saving only the primitive data
-    and the ids of complex objects (items, skills).
 
-    Concrete objects (Weapon, Armor, DamageSkill, etc.) are NOT
-    duplicated in the save: upon loading, they are searched in the catalogs
-*/
 public class PlayerSerializer implements JsonSerializer<Player> {
 
     @Override
     public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
 
-        // ── Primitive data ────────────────────────────────────────────────
         jsonObject.addProperty("name",       player.getName());
         jsonObject.addProperty("level",      player.getLevel());
         jsonObject.addProperty("currentHp",  player.getCurrentHp());
         jsonObject.addProperty("experience", player.getExperience());
+        jsonObject.addProperty("gold",       player.getGold());
 
-        // ── Stats (only the values, not the full Stats object) ───────────
         JsonObject stats = new JsonObject();
         stats.addProperty("atk",   player.getBaseStats().getAtk());
         stats.addProperty("def",   player.getBaseStats().getDef());
         stats.addProperty("maxHp", player.getBaseStats().getMaxHp());
         jsonObject.add("stats", stats);
 
-        // ── Inventory → array of ids ──────────────────────────────────────
-        // If the player has two copies of the same itemtype, the id appears twice.
         JsonArray inventoryIds = new JsonArray();
         for (Item item : player.getInventory().getItems()) {
             inventoryIds.add(item.getId());
         }
         jsonObject.add("inventoryItemIds", inventoryIds);
 
-        // ── Equipment → map slotName → id──────────────────────────────
         JsonObject equipment = new JsonObject();
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             Equipable equipped = player.getEquipment().getEquippedItem(slot);
@@ -53,7 +43,6 @@ public class PlayerSerializer implements JsonSerializer<Player> {
         }
         jsonObject.add("equipment", equipment);
 
-        // ── Skills possessed → array of objects { skillId, level, mastery } ─
         JsonArray skillsArray = new JsonArray();
         for (PlayerSkill ps : player.getSkillInventory()) {
             JsonObject skillEntry = new JsonObject();
@@ -64,7 +53,6 @@ public class PlayerSerializer implements JsonSerializer<Player> {
         }
         jsonObject.add("skills", skillsArray);
 
-        // ── Active Loadout → array of skillIds ─────────────────────────────
         JsonArray loadoutIds = new JsonArray();
         for (PlayerSkill se : player.getSkillLoadout().getEquippedSkills()) {
             loadoutIds.add(se.getSkill().getId());

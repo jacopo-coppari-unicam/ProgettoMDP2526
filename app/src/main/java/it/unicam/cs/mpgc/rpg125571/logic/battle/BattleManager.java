@@ -38,14 +38,10 @@ public class BattleManager {
         return damage;
     }
 
-    /**
-     * Usa una skill dal loadout.
-     * Cast delega alla skill concreta tramite Skill.cast(); in più calcola
-     * il danno/cura e lo applica al target corretto.
-     *
-     * @param playerSkill la skill scelta dal loadout
-     * @return valore numerico dell'effetto (danno o cura), 0 se tipo sconosciuto
-     */
+
+    // Use a skill from your loadout
+    // playerSkill skill selected form the loadout
+    // return numeric value of the effect (damage or healing), 0 if type unknown
     public int playerSkillAction(PlayerSkill playerSkill) {
         if (battleEnded) return 0;
 

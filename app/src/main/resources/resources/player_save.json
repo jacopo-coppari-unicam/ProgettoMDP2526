@@ -1,0 +1,73 @@
+{
+  "name": "Eroe Unicam",
+  "level": 9,
+  "currentHp": 279,
+  "experience": 530,
+  "gold": 922,
+  "stats": {
+    "atk": 60,
+    "def": 32,
+    "maxHp": 280
+  },
+  "inventoryItemIds": [
+    5,
+    7,
+    7,
+    7,
+    6,
+    7,
+    7,
+    7,
+    6,
+    7,
+    7,
+    7,
+    7,
+    6,
+    7,
+    3,
+    7,
+    7,
+    5,
+    7,
+    7,
+    7,
+    3
+  ],
+  "equipment": {
+    "WEAPON": 1,
+    "HELMET": 3
+  },
+  "skills": [
+    {
+      "skillId": 1,
+      "level": 1,
+      "masteryPoints": 0
+    },
+    {
+      "skillId": 3,
+      "level": 5,
+      "masteryPoints": 10
+    },
+    {
+      "skillId": 2,
+      "level": 1,
+      "masteryPoints": 0
+    },
+    {
+      "skillId": 4,
+      "level": 1,
+      "masteryPoints": 0
+    },
+    {
+      "skillId": 5,
+      "level": 1,
+      "masteryPoints": 0
+    }
+  ],
+  "equippedSkillIds": [
+    1,
+    2,
+    3
+  ]
+}

@@ -38,15 +38,12 @@ public class SkillLoader {
                 int baseValue = obj.get("baseValue").getAsInt();
 
                 Skill skill = switch (type) {
-
                     case "DAMAGE" -> new DamageSkill(
                             id, name, description, element, baseValue
                     );
-
                     case "HEALING" -> new HealingSkill(
                             id, name, description, element, baseValue
                     );
-
                     default -> throw new IllegalArgumentException("Tipo skill non valido: " + type);
                 };
 
